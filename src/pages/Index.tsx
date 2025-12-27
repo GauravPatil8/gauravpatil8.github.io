@@ -63,151 +63,168 @@ const Index = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <div className="max-w-3xl mx-auto px-6 py-16">
-          {/* Header */}
-          <header className="mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Your Name
-            </h1>
-            <p className="text-lg text-muted-foreground mb-4">
-              PhD Student in Computer Science @ University
-            </p>
-            <p className="text-foreground leading-relaxed mb-6">
-              I'm a machine learning researcher focused on deep learning, computer vision, and natural language processing. 
-              My work involves implementing and extending state-of-the-art research papers.
-            </p>
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             
-            {/* Social links */}
-            <div className="flex items-center gap-4">
-              <a href="mailto:your@email.edu" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-sm">
-                <Mail size={16} /> Email
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-sm">
-                <Github size={16} /> GitHub
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-sm">
-                <BookOpen size={16} /> Scholar
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-sm">
-                <Linkedin size={16} /> LinkedIn
-              </a>
-            </div>
-          </header>
-
-          {/* Research Interests */}
-          <section className="mb-12">
-            <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-              Research Interests
-            </h2>
-            <ul className="list-disc list-inside text-foreground space-y-1 pl-1">
-              <li>Deep Learning & Neural Network Architectures</li>
-              <li>Computer Vision & Image Understanding</li>
-              <li>Natural Language Processing</li>
-              <li>Self-Supervised & Representation Learning</li>
-            </ul>
-          </section>
-
-          {/* Publications */}
-          <section className="mb-12">
-            <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-              Publications
-            </h2>
-            <div className="space-y-6">
-              {publications.map((pub, index) => (
-                <div key={index}>
-                  <h3 className="font-medium text-foreground">{pub.title}</h3>
-                  <p className="text-sm text-muted-foreground">{pub.authors}</p>
-                  <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
-                  <div className="flex gap-3 mt-1">
-                    {pub.links.arxiv && (
-                      <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
-                        <FileText size={14} /> arXiv
-                      </a>
-                    )}
-                    {pub.links.code && (
-                      <a href={pub.links.code} className="text-sm text-primary hover:underline flex items-center gap-1">
-                        <Github size={14} /> Code
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Projects */}
-          <section className="mb-12">
-            <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-              Projects
-            </h2>
-            <div className="space-y-6">
-              {projects.map((project, index) => (
-                <div key={index} className="flex gap-4">
-                  {/* Project Image */}
-                  <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden">
+            {/* Left Column - About Me (Sticky) */}
+            <aside className="lg:w-64 flex-shrink-0">
+              <div className="lg:sticky lg:top-16">
+                {/* Profile */}
+                <div className="mb-6">
+                  <div className="w-32 h-32 rounded-full bg-secondary overflow-hidden mb-4">
                     <img 
-                      src={project.image} 
-                      alt={project.title}
+                      src="/placeholder.svg" 
+                      alt="Profile" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
-                  {/* Project Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <h3 className="font-medium text-foreground">{project.title}</h3>
-                      <div className="flex gap-2 flex-shrink-0">
-                        {project.github && (
-                          <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
-                            <Github size={18} />
+                  <h1 className="text-2xl font-bold text-foreground">Your Name</h1>
+                  <p className="text-muted-foreground mt-1">PhD Student</p>
+                  <p className="text-sm text-muted-foreground">Computer Science @ University</p>
+                </div>
+
+                {/* Bio */}
+                <p className="text-sm text-foreground leading-relaxed mb-6">
+                  Machine learning researcher focused on deep learning, computer vision, and NLP. 
+                  I implement and extend state-of-the-art research papers.
+                </p>
+
+                {/* Social Links */}
+                <div className="flex flex-col gap-2 mb-8">
+                  <a href="mailto:your@email.edu" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <Mail size={16} /> your@email.edu
+                  </a>
+                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <Github size={16} /> github.com/username
+                  </a>
+                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <BookOpen size={16} /> Google Scholar
+                  </a>
+                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <Linkedin size={16} /> LinkedIn
+                  </a>
+                </div>
+
+                {/* Research Interests */}
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground mb-2 uppercase tracking-wide">
+                    Research Interests
+                  </h2>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>Deep Learning</li>
+                    <li>Computer Vision</li>
+                    <li>Natural Language Processing</li>
+                    <li>Self-Supervised Learning</li>
+                  </ul>
+                </div>
+              </div>
+            </aside>
+
+            {/* Right Column - Work */}
+            <main className="flex-1 min-w-0">
+              {/* Publications */}
+              <section className="mb-12">
+                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
+                  Publications
+                </h2>
+                <div className="space-y-6">
+                  {publications.map((pub, index) => (
+                    <div key={index}>
+                      <h3 className="font-medium text-foreground">{pub.title}</h3>
+                      <p className="text-sm text-muted-foreground">{pub.authors}</p>
+                      <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
+                      <div className="flex gap-3 mt-1">
+                        {pub.links.arxiv && (
+                          <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
+                            <FileText size={14} /> arXiv
                           </a>
                         )}
-                        {project.paper && (
-                          <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
-                            <ExternalLink size={18} />
+                        {pub.links.code && (
+                          <a href={pub.links.code} className="text-sm text-primary hover:underline flex items-center gap-1">
+                            <Github size={14} /> Code
                           </a>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
-                          {tag}
-                        </span>
-                      ))}
+                  ))}
+                </div>
+              </section>
+
+              {/* Projects */}
+              <section className="mb-12">
+                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
+                  Projects
+                </h2>
+                <div className="space-y-6">
+                  {projects.map((project, index) => (
+                    <div key={index} className="flex gap-4">
+                      {/* Project Image */}
+                      <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden">
+                        <img 
+                          src={project.image} 
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      {/* Project Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="font-medium text-foreground">{project.title}</h3>
+                          <div className="flex gap-2 flex-shrink-0">
+                            {project.github && (
+                              <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
+                                <Github size={18} />
+                              </a>
+                            )}
+                            {project.paper && (
+                              <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
+                                <ExternalLink size={18} />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {project.tags.map((tag) => (
+                            <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Education */}
+              <section className="mb-12">
+                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
+                  Education
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-foreground">Ph.D. in Computer Science</h3>
+                    <p className="text-sm text-muted-foreground">University Name, 2021 - Present</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-foreground">M.S. in Computer Science</h3>
+                    <p className="text-sm text-muted-foreground">University Name, 2019 - 2021</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-foreground">B.S. in Computer Science</h3>
+                    <p className="text-sm text-muted-foreground">University Name, 2015 - 2019</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
+              </section>
 
-          {/* Education */}
-          <section className="mb-12">
-            <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-              Education
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium text-foreground">Ph.D. in Computer Science</h3>
-                <p className="text-sm text-muted-foreground">University Name, 2021 - Present</p>
-              </div>
-              <div>
-                <h3 className="font-medium text-foreground">M.S. in Computer Science</h3>
-                <p className="text-sm text-muted-foreground">University Name, 2019 - 2021</p>
-              </div>
-              <div>
-                <h3 className="font-medium text-foreground">B.S. in Computer Science</h3>
-                <p className="text-sm text-muted-foreground">University Name, 2015 - 2019</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Footer */}
-          <footer className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Your Name. Built with Lovable.</p>
-          </footer>
+              {/* Footer */}
+              <footer className="pt-8 border-t border-border text-sm text-muted-foreground">
+                <p>© {new Date().getFullYear()} Your Name</p>
+              </footer>
+            </main>
+          </div>
         </div>
       </div>
     </>
