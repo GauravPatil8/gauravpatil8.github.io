@@ -7,6 +7,7 @@ const Index = () => {
       title: "Vision Transformer Implementation",
       description: "PyTorch implementation of 'An Image is Worth 16x16 Words' with training pipelines and attention visualization.",
       tags: ["PyTorch", "Computer Vision", "Transformers"],
+      image: "/placeholder.svg",
       github: "#",
       paper: "#",
     },
@@ -14,18 +15,21 @@ const Index = () => {
       title: "Diffusion Models from Scratch",
       description: "Implementation of DDPM and improved sampling techniques for image generation.",
       tags: ["Diffusion", "Generative AI"],
+      image: "/placeholder.svg",
       github: "#",
     },
     {
       title: "BERT Fine-tuning Pipeline",
       description: "Modular pipeline for fine-tuning BERT on custom NLP tasks with evaluation metrics.",
       tags: ["NLP", "BERT", "HuggingFace"],
+      image: "/placeholder.svg",
       github: "#",
     },
     {
       title: "Graph Neural Networks Library",
       description: "Flexible GNN implementation supporting GCN, GAT, and GraphSAGE architectures.",
       tags: ["GNN", "PyTorch Geometric"],
+      image: "/placeholder.svg",
       github: "#",
     },
   ];
@@ -138,29 +142,41 @@ const Index = () => {
             </h2>
             <div className="space-y-6">
               {projects.map((project, index) => (
-                <div key={index}>
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-medium text-foreground">{project.title}</h3>
-                    <div className="flex gap-2 flex-shrink-0">
-                      {project.github && (
-                        <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
-                          <Github size={18} />
-                        </a>
-                      )}
-                      {project.paper && (
-                        <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
-                          <ExternalLink size={18} />
-                        </a>
-                      )}
-                    </div>
+                <div key={index} className="flex gap-4">
+                  {/* Project Image */}
+                  <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
-                        {tag}
-                      </span>
-                    ))}
+                  
+                  {/* Project Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-medium text-foreground">{project.title}</h3>
+                      <div className="flex gap-2 flex-shrink-0">
+                        {project.github && (
+                          <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
+                            <Github size={18} />
+                          </a>
+                        )}
+                        {project.paper && (
+                          <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
+                            <ExternalLink size={18} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
