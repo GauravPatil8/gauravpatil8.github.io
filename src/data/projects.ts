@@ -1,3 +1,9 @@
+export interface ProjectMedia {
+  type: "image" | "youtube";
+  url: string;
+  caption?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -7,6 +13,7 @@ export interface Project {
   image: string;
   github?: string;
   paper?: string;
+  media?: ProjectMedia[];
 }
 
 export const projects: Project[] = [
