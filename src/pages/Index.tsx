@@ -43,14 +43,14 @@ const Index = () => {
                 <div className="mb-6">
                   <div className="w-32 h-32 rounded-full bg-secondary overflow-hidden mb-4">
                     <img 
-                      src="/placeholder.svg" 
+                      src="/profile.jpg" 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h1 className="text-2xl font-bold text-foreground">Your Name</h1>
-                  <p className="text-muted-foreground mt-1">PhD Student</p>
-                  <p className="text-sm text-muted-foreground">Computer Science @ University</p>
+                  <h1 className="text-2xl font-bold text-foreground">Gaurav Patil</h1>
+                  <p className="text-muted-foreground mt-1">Undergrad Student</p>
+                  <p className="text-sm text-muted-foreground">AI & Data Science @ SIES Graduate School of Technology</p>
                 </div>
 
                 {/* Bio */}
@@ -61,16 +61,16 @@ const Index = () => {
 
                 {/* Social Links */}
                 <div className="flex flex-col gap-2 mb-8">
-                  <a href="mailto:your@email.edu" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
-                    <Mail size={16} /> your@email.edu
+                  <a href="mailto:patilgauravpradeep@gmail.com" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <Mail size={16} /> patilgauravpradeep@gmail.com
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
-                    <Github size={16} /> github.com/username
+                  <a href="https://github.com/GauravPatil8" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                    <Github size={16} /> github.com
                   </a>
                   <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <BookOpen size={16} /> Google Scholar
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <a href="https://www.linkedin.com/in/gauravpatil8/" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <Linkedin size={16} /> LinkedIn
                   </a>
                 </div>
@@ -93,7 +93,7 @@ const Index = () => {
             {/* Right Column - Work */}
             <main className="flex-1 min-w-0">
               {/* Publications */}
-              <section className="mb-12">
+              {/* <section className="mb-12">
                 <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
                   Publications
                 </h2>
@@ -118,7 +118,7 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
-              </section>
+              </section> */}
 
               {/* Projects */}
               <section className="mb-12">
@@ -180,24 +180,24 @@ const Index = () => {
                   Education
                 </h2>
                 <div className="space-y-4">
-                  <div>
+                  {/* <div>
                     <h3 className="font-medium text-foreground">Ph.D. in Computer Science</h3>
                     <p className="text-sm text-muted-foreground">University Name, 2021 - Present</p>
                   </div>
                   <div>
                     <h3 className="font-medium text-foreground">M.S. in Computer Science</h3>
                     <p className="text-sm text-muted-foreground">University Name, 2019 - 2021</p>
-                  </div>
+                  </div> */}
                   <div>
-                    <h3 className="font-medium text-foreground">B.S. in Computer Science</h3>
-                    <p className="text-sm text-muted-foreground">University Name, 2015 - 2019</p>
+                    <h3 className="font-medium text-foreground">B.E. in AI & Data Science</h3>
+                    <p className="text-sm text-muted-foreground">SIES Graduate School of Technology, 2022 - Present</p>
                   </div>
                 </div>
               </section>
 
               {/* Footer */}
               <footer className="pt-8 border-t border-border text-sm text-muted-foreground">
-                <p>© {new Date().getFullYear()} Your Name</p>
+                <p>© {new Date().getFullYear()} Gaurav Patil</p>
               </footer>
             </main>
           </div>
