@@ -28,7 +28,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Your Name | ML/AI Researcher</title>
+        <title>Gaurav Patil | ML/AI Researcher</title>
         <meta name="description" content="Academic portfolio showcasing machine learning and AI research projects and publications." />
       </Helmet>
 

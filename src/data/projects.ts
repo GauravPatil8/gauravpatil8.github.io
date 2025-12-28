@@ -18,25 +18,34 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: "vision-transformer",
-    title: "Vision Transformer Implementation",
-    description: "PyTorch implementation of 'An Image is Worth 16x16 Words' with training pipelines and attention visualization.",
-    longDescription: `A comprehensive PyTorch implementation of the Vision Transformer (ViT) architecture from the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale".
+    id: "meshtron",
+    title: "MeshTron: 3D Mesh Generation from Point Clouds",
+    description: "End-to-end implementation of a neural pipeline for generating high-quality triangle meshes directly from unstructured point clouds.",
+    longDescription: `MeshTron is a research-focused implementation inspired by NVIDIA’s Meshtron approach, aimed at converting raw 3D point clouds into coherent, watertight triangle meshes using deep learning.
 
-## Features
-- Complete ViT architecture with configurable depth, heads, and embedding dimensions
-- Training pipeline with mixed precision support
-- Attention map visualization tools
-- Pre-trained weight loading from official checkpoints
-- Support for fine-tuning on custom datasets
+  The project explores how neural networks can learn geometric structure, surface continuity, and topology from unordered point samples, bridging the gap between point-based representations and mesh-based 3D assets used in real-time graphics, simulation, and animation pipelines.
 
-## Technical Details
-The implementation follows the original paper closely, including patch embedding, positional encoding, and the standard transformer encoder blocks. The codebase is modular and well-documented for educational purposes.`,
-    tags: ["PyTorch", "Computer Vision", "Transformers"],
-    image: "/placeholder.svg",
-    github: "#",
-    paper: "#",
+  ## Features
+  - End-to-end neural pipeline for point cloud to mesh reconstruction
+  - Learned surface representation with explicit vertex and face prediction
+  - Custom PyTorch training loop with geometry-aware loss functions
+  - Support for synthetic datasets (cubes, tori, parametric shapes) for controlled experiments
+  - Mesh quality evaluation using geometric metrics (surface smoothness, edge consistency)
+  - Modular architecture designed for experimentation with different encoders and decoders
+
+  ## Technical Details
+  The system takes an unstructured point cloud as input and encodes it using a permutation-invariant network inspired by PointNet-style architectures. The latent representation is then decoded into explicit mesh primitives, predicting vertex positions and mesh connectivity in a structured manner.
+
+  Special care is taken to handle challenges unique to mesh generation, such as maintaining consistent topology, avoiding self-intersections, and producing animation-friendly geometry. The implementation emphasizes clarity and research extensibility, making it suitable for further exploration into retopology, geometric deep learning, and neural surface reconstruction.
+
+  This project serves both as a learning-driven reimplementation of modern neural mesh generation techniques and as a foundation for future work in AI-assisted 3D content creation.`,
+    tags: ["PyTorch", "Tranformers", "Hourglass Transformer", "Mesh Generation", "Geometric Deep Learning"],
+    image: "/meshtron_demo_2.gif",
+    github: "https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch",
+    paper: "https://arxiv.org/abs/2412.09548v1",
+    media: [{type: "video", url: "/meshtron_demo.mp4", caption: "abc"}]
   },
+
   {
     id: "diffusion-models",
     title: "Diffusion Models from Scratch",

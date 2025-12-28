@@ -102,6 +102,9 @@ const ProjectDetail = () => {
             Back to home
           </Link>
 
+          {/* Project Header */}
+          <h1 className="text-3xl font-bold text-foreground mb-4">{project.title}</h1>
+          
           {/* Project Image */}
           <div className="aspect-square w-full max-w-md mx-auto bg-secondary rounded-lg overflow-hidden mb-8">
             <img
@@ -111,8 +114,6 @@ const ProjectDetail = () => {
             />
           </div>
 
-          {/* Project Header */}
-          <h1 className="text-3xl font-bold text-foreground mb-4">{project.title}</h1>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
