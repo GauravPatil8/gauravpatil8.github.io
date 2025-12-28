@@ -30,12 +30,13 @@ const MediaItem = ({ media }: { media: ProjectMedia }) => {
     );
   }
 
+  // Handle both image and gif types
   return (
     <div className="my-6">
       <div className="w-full rounded-lg overflow-hidden bg-secondary">
         <img
           src={media.url}
-          alt={media.caption || "Project image"}
+          alt={media.caption || "Project media"}
           className="w-full h-auto object-cover"
         />
       </div>
@@ -82,7 +83,7 @@ const ProjectDetail = () => {
           </Link>
 
           {/* Project Image */}
-          <div className="aspect-video w-full bg-secondary rounded-lg overflow-hidden mb-8">
+          <div className="aspect-square w-full max-w-md mx-auto bg-secondary rounded-lg overflow-hidden mb-8">
             <img
               src={project.image}
               alt={project.title}

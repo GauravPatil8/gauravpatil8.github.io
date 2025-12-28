@@ -128,8 +128,8 @@ const Index = () => {
                 <div className="space-y-6">
                   {projects.map((project, index) => (
                     <div key={index} className="flex gap-4">
-                      {/* Project Image */}
-                      <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden">
+                      {/* Project Image - Square Thumbnail */}
+                      <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden aspect-square">
                         <img 
                           src={project.image} 
                           alt={project.title}
