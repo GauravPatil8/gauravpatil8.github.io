@@ -1,7 +1,50 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Github, ExternalLink } from "lucide-react";
-import { projects } from "@/data/projects";
+import { projects, ProjectMedia } from "@/data/projects";
+
+const MediaItem = ({ media }: { media: ProjectMedia }) => {
+  if (media.type === "youtube") {
+    // Extract video ID from YouTube URL
+    const getYouTubeId = (url: string) => {
+      const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\s]+)/);
+      return match ? match[1] : null;
+    };
+    const videoId = getYouTubeId(media.url);
+    
+    return (
+      <div className="my-6">
+        <div className="aspect-video w-full rounded-lg overflow-hidden bg-secondary">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title={media.caption || "YouTube video"}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full"
+          />
+        </div>
+        {media.caption && (
+          <p className="text-sm text-muted-foreground mt-2 text-center italic">{media.caption}</p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="my-6">
+      <div className="w-full rounded-lg overflow-hidden bg-secondary">
+        <img
+          src={media.url}
+          alt={media.caption || "Project image"}
+          className="w-full h-auto object-cover"
+        />
+      </div>
+      {media.caption && (
+        <p className="text-sm text-muted-foreground mt-2 text-center italic">{media.caption}</p>
+      )}
+    </div>
+  );
+};
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +66,7 @@ const ProjectDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{project.title} | Your Name</title>
+        <title>{project.title} | Gaurav Patil</title>
         <meta name="description" content={project.description} />
       </Helmet>
 
@@ -111,6 +154,18 @@ const ProjectDetail = () => {
               );
             })}
           </div>
+
+          {/* Media Gallery */}
+          {project.media && project.media.length > 0 && (
+            <div className="mt-12 pt-8 border-t border-border">
+              <h2 className="text-lg font-semibold text-foreground mb-6">Gallery</h2>
+              <div className="space-y-6">
+                {project.media.map((item, index) => (
+                  <MediaItem key={index} media={item} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
