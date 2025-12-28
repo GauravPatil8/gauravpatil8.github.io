@@ -1,5 +1,5 @@
 export interface ProjectMedia {
-  type: "image" | "youtube" | "gif";
+  type: "image" | "youtube" | "gif" | "video";
   url: string;
   caption?: string;
 }

@@ -30,6 +30,26 @@ const MediaItem = ({ media }: { media: ProjectMedia }) => {
     );
   }
 
+  // Handle video (mp4) type
+  if (media.type === "video") {
+    return (
+      <div className="my-6">
+        <div className="w-full rounded-lg overflow-hidden bg-secondary">
+          <video
+            src={media.url}
+            controls
+            className="w-full h-auto"
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        {media.caption && (
+          <p className="text-sm text-muted-foreground mt-2 text-center italic">{media.caption}</p>
+        )}
+      </div>
+    );
+  }
+
   // Handle both image and gif types
   return (
     <div className="my-6">
