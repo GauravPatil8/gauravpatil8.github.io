@@ -1,39 +1,9 @@
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Github, Linkedin, Mail, BookOpen, FileText, ExternalLink } from "lucide-react";
+import { Github, Linkedin, Mail, BookOpen, FileText, ExternalLink, ArrowRight } from "lucide-react";
+import { projects } from "@/data/projects";
 
 const Index = () => {
-  const projects = [
-    {
-      title: "Vision Transformer Implementation",
-      description: "PyTorch implementation of 'An Image is Worth 16x16 Words' with training pipelines and attention visualization.",
-      tags: ["PyTorch", "Computer Vision", "Transformers"],
-      image: "/placeholder.svg",
-      github: "#",
-      paper: "#",
-    },
-    {
-      title: "Diffusion Models from Scratch",
-      description: "Implementation of DDPM and improved sampling techniques for image generation.",
-      tags: ["Diffusion", "Generative AI"],
-      image: "/placeholder.svg",
-      github: "#",
-    },
-    {
-      title: "BERT Fine-tuning Pipeline",
-      description: "Modular pipeline for fine-tuning BERT on custom NLP tasks with evaluation metrics.",
-      tags: ["NLP", "BERT", "HuggingFace"],
-      image: "/placeholder.svg",
-      github: "#",
-    },
-    {
-      title: "Graph Neural Networks Library",
-      description: "Flexible GNN implementation supporting GCN, GAT, and GraphSAGE architectures.",
-      tags: ["GNN", "PyTorch Geometric"],
-      image: "/placeholder.svg",
-      github: "#",
-    },
-  ];
-
   const publications = [
     {
       title: "Efficient Attention Mechanisms for Long-Sequence Modeling",
@@ -192,6 +162,12 @@ const Index = () => {
                             </span>
                           ))}
                         </div>
+                        <Link
+                          to={`/project/${project.id}`}
+                          className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2"
+                        >
+                          More Info <ArrowRight size={14} />
+                        </Link>
                       </div>
                     </div>
                   ))}
