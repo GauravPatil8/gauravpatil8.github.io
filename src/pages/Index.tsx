@@ -5,22 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Index = () => {
   const publications = [
     {
-      title: "Efficient Attention Mechanisms for Long-Sequence Modeling",
-      authors: "Your Name, Co-Author A, Co-Author B",
-      venue: "NeurIPS 2024",
-      links: { arxiv: "#", code: "#" },
-    },
-    {
-      title: "Self-Supervised Learning for Medical Image Analysis",
-      authors: "Co-Author C, Your Name, Co-Author D",
-      venue: "MICCAI 2024",
-      links: { arxiv: "#", code: "#" },
-    },
-    {
-      title: "Graph Transformers for Molecular Property Prediction",
-      authors: "Your Name, Co-Author E",
-      venue: "ICML 2023",
-      links: { arxiv: "#" },
+      title: "Detection-Guided Multimodal Grocery Recognition",
+      authors: "Gaurav Patil, Dr.Neetu Sabu, Ayaan Dwivedi, Harsh Chaudhary, Madhavan Nadar",
+      venue: "ICICGR 2026",
+      links: { arxiv: "#", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
     },
   ];
 
@@ -51,12 +39,12 @@ const Index = () => {
                   <p className="text-muted-foreground mt-1">Undergrad Student</p>
                   <p className="text-sm text-muted-foreground">AI & Data Science @ SIES Graduate School of Technology</p>
                 </div>
-
-                {/* Bio */}
+                {/* bio */}
                 <p className="text-sm text-foreground leading-relaxed mb-6">
-                  Machine learning researcher focused on deep learning, computer vision, and NLP. 
-                  I implement and extend state-of-the-art research papers.
+                  Machine learning researcher and engineer working on deep learning for vision,
+                  multimodal, and 3D data.
                 </p>
+
 
                 {/* Social Links */}
                 <div className="flex flex-col gap-2 mb-8">
@@ -80,10 +68,11 @@ const Index = () => {
                     Research Interests
                   </h2>
                   <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>Computer Graphics</li>
                     <li>Deep Learning</li>
                     <li>Computer Vision</li>
                     <li>Natural Language Processing</li>
-                    <li>Self-Supervised Learning</li>
+                    <li>Reinforcement Learning</li>
                   </ul>
                 </div>
               </div>
@@ -100,7 +89,7 @@ const Index = () => {
                 {/* Research & Projects Tab */}
                 <TabsContent value="research">
                   {/* Publications */}
-                  {/* <div className="mb-10">
+                  <div className="mb-10">
                     <h3 className="text-lg font-semibold text-foreground mb-4">
                       Publications
                     </h3>
@@ -108,7 +97,14 @@ const Index = () => {
                       {publications.map((pub, index) => (
                         <div key={index}>
                           <h4 className="font-medium text-foreground">{pub.title}</h4>
-                          <p className="text-sm text-muted-foreground">{pub.authors}</p>
+                          <p className="text-sm text-muted-foreground">
+                          <span className="font-mediumx text-foreground">
+                            {pub.authors.split(",")[0]}
+                          </span>
+                          {pub.authors.split(",").slice(1).length > 0 && (
+                            <>,{pub.authors.split(",").slice(1).join(",")}</>
+                          )}
+                        </p>
                           <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
                           <div className="flex gap-3 mt-1">
                             {pub.links.arxiv && (
@@ -125,8 +121,8 @@ const Index = () => {
                         </div>
                       ))}
                     </div>
-                  </div> */}
-
+                  </div>
+                  
                   {/* Projects */}
                   <div className="mb-10">
                     <h3 className="text-lg font-semibold text-foreground mb-4">
@@ -191,25 +187,81 @@ const Index = () => {
 
                 {/* Work Experience Tab */}
                 <TabsContent value="experience">
+                  
                   <div className="space-y-6">
-                    <div className="border-l-2 border-secondary pl-4">
-                      <h3 className="font-medium text-foreground">Position Title</h3>
-                      <p className="text-sm text-primary">Company Name</p>
-                      <p className="text-xs text-muted-foreground mb-2">Jan 2024 - Present</p>
-                      <p className="text-sm text-muted-foreground">
-                        Brief description of your role and responsibilities. Key achievements and technologies used.
-                      </p>
+                    
+
+                      {/* Current */}
+                      <div className="border-l-2 border-secondary pl-4">
+                        <div className="flex gap-4">
+
+                        <div className="w-12 h-12  rounded  overflow-hidden">
+                            <img 
+                              src="/aub.png" 
+                              alt="Company Logo"
+                              className="w-full h-full object-contain p-1"
+                            />
+                          </div>
+                          <div className=" flex-1">
+
+                          <h3 className="font-medium text-foreground">
+                            Deep Learning Researcher
+                          </h3>
+                          <p className="text-sm text-primary">
+                            American University of Beirut
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Jan 2025 – Present
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Conducting research in deep learning with a focus on representation
+                            learning and model behavior in vision-based systems. Working on
+                            experimental pipelines involving large-scale training, embedding
+                            analysis, and evaluation of learned feature spaces. Actively exploring
+                            modern architectures and research methodologies, with emphasis on
+                            reproducibility, empirical analysis, and research-driven implementation.
+                          </p>
+                          </div>
+                        </div>
+
                     </div>
+
+                    {/* Previous */}
                     <div className="border-l-2 border-secondary pl-4">
-                      <h3 className="font-medium text-foreground">Previous Position</h3>
-                      <p className="text-sm text-primary">Previous Company</p>
-                      <p className="text-xs text-muted-foreground mb-2">Jun 2023 - Dec 2023</p>
-                      <p className="text-sm text-muted-foreground">
-                        Brief description of your role and responsibilities at this position.
+
+                    <div className="flex gap-4">
+                    <div className="w-12 h-12 overflow-hidden">
+                        <img 
+                          src="/baysquare.png" 
+                          alt="Company Logo"
+                          className="w-full h-full object-contain p-1"
+                        />
+                      </div>
+                      <div className="flex-1">
+
+                      <h3 className="font-medium text-foreground">
+                        Backend Developer Intern
+                      </h3>
+                      <p className="text-sm text-primary">
+                        Baysquare Technologies
                       </p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Jul 2024 – Aug 2024
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Built and automated backend workflows for contract generation and
+                        digital signing using Django and Python. Integrated MySQL-based data
+                        pipelines with the DocuSign API to generate, send, and track contracts.
+                        Automated end-to-end processes using cron jobs on AWS EC2 and ensured
+                        secure storage of signed documents in S3. Collaborated via GitHub in a
+                        production codebase with a focus on reliability and maintainability.
+                      </p>
+                      </div>
+                    </div>
                     </div>
                   </div>
                 </TabsContent>
+
               </Tabs>
 
               {/* Footer */}
