@@ -8,7 +8,7 @@ const Index = () => {
       title: "Detection-Guided Multimodal Grocery Recognition",
       authors: "Gaurav Patil, Dr.Neetu Sabu, Ayaan Dwivedi, Harsh Chaudhary, Madhavan Nadar",
       venue: "ICICGR 2026",
-      links: { arxiv: "#", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
+      links: { arxiv: "/comingsoon", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
     },
   ];
 
@@ -109,7 +109,7 @@ const Index = () => {
                           <div className="flex gap-3 mt-1">
                             {pub.links.arxiv && (
                               <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
-                                <FileText size={14} /> arXiv
+                                <FileText size={14} /> Paper
                               </a>
                             )}
                             {pub.links.code && (
