@@ -92,105 +92,129 @@ const Index = () => {
 
             {/* Right Column - Work */}
             <main className="flex-1 min-w-0">
-              {/* Publications */}
-              {/* <section className="mb-12">
-                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
-                  Publications
+              {/* Research Section */}
+              <section className="mb-16">
+                <h2 className="text-2xl font-bold text-foreground mb-8 pb-2 border-b-2 border-primary">
+                  Research
                 </h2>
-                <div className="space-y-6">
-                  {publications.map((pub, index) => (
-                    <div key={index}>
-                      <h3 className="font-medium text-foreground">{pub.title}</h3>
-                      <p className="text-sm text-muted-foreground">{pub.authors}</p>
-                      <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
-                      <div className="flex gap-3 mt-1">
-                        {pub.links.arxiv && (
-                          <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
-                            <FileText size={14} /> arXiv
-                          </a>
-                        )}
-                        {pub.links.code && (
-                          <a href={pub.links.code} className="text-sm text-primary hover:underline flex items-center gap-1">
-                            <Github size={14} /> Code
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section> */}
 
-              {/* Projects */}
-              <section className="mb-12">
-                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
-                  Projects
-                </h2>
-                <div className="space-y-6">
-                  {projects.map((project, index) => (
-                    <div key={index} className="flex gap-4">
-                      {/* Project Image - Square Thumbnail */}
-                      <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden aspect-square">
-                        <img 
-                          src={project.image} 
-                          alt={project.title}
-                          className="w-full h-full object-cover"
-                        />
+                {/* Publications */}
+                {/* <div className="mb-10">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
+                    Publications
+                  </h3>
+                  <div className="space-y-6">
+                    {publications.map((pub, index) => (
+                      <div key={index}>
+                        <h4 className="font-medium text-foreground">{pub.title}</h4>
+                        <p className="text-sm text-muted-foreground">{pub.authors}</p>
+                        <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
+                        <div className="flex gap-3 mt-1">
+                          {pub.links.arxiv && (
+                            <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
+                              <FileText size={14} /> arXiv
+                            </a>
+                          )}
+                          {pub.links.code && (
+                            <a href={pub.links.code} className="text-sm text-primary hover:underline flex items-center gap-1">
+                              <Github size={14} /> Code
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      
-                      {/* Project Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-4">
-                          <h3 className="font-medium text-foreground">{project.title}</h3>
-                          <div className="flex gap-2 flex-shrink-0">
-                            {project.github && (
-                              <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
-                                <Github size={18} />
-                              </a>
-                            )}
-                            {project.paper && (
-                              <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
-                                <ExternalLink size={18} />
-                              </a>
-                            )}
+                    ))}
+                  </div>
+                </div> */}
+
+                {/* Projects */}
+                <div className="mb-10">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
+                    Projects
+                  </h3>
+                  <div className="space-y-6">
+                    {projects.map((project, index) => (
+                      <div key={index} className="flex gap-4">
+                        {/* Project Image - Square Thumbnail */}
+                        <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden aspect-square">
+                          <img 
+                            src={project.image} 
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        
+                        {/* Project Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4">
+                            <h4 className="font-medium text-foreground">{project.title}</h4>
+                            <div className="flex gap-2 flex-shrink-0">
+                              {project.github && (
+                                <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
+                                  <Github size={18} />
+                                </a>
+                              )}
+                              {project.paper && (
+                                <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
+                                  <ExternalLink size={18} />
+                                </a>
+                              )}
+                            </div>
                           </div>
+                          <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {project.tags.map((tag) => (
+                              <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <Link
+                            to={`/project/${project.id}`}
+                            className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2"
+                          >
+                            More Info <ArrowRight size={14} />
+                          </Link>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {project.tags.map((tag) => (
-                            <span key={tag} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <Link
-                          to={`/project/${project.id}`}
-                          className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2"
-                        >
-                          More Info <ArrowRight size={14} />
-                        </Link>
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
+                    Education
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-foreground">B.E. in AI & Data Science</h4>
+                      <p className="text-sm text-muted-foreground">SIES Graduate School of Technology, 2022 - Present</p>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </section>
 
-              {/* Education */}
+              {/* Work Experience Section */}
               <section className="mb-12">
-                <h2 className="text-xl font-semibold text-foreground mb-6 pb-2 border-b border-border">
-                  Education
+                <h2 className="text-2xl font-bold text-foreground mb-8 pb-2 border-b-2 border-primary">
+                  Work Experience
                 </h2>
-                <div className="space-y-4">
-                  {/* <div>
-                    <h3 className="font-medium text-foreground">Ph.D. in Computer Science</h3>
-                    <p className="text-sm text-muted-foreground">University Name, 2021 - Present</p>
+                <div className="space-y-6">
+                  <div className="border-l-2 border-secondary pl-4">
+                    <h3 className="font-medium text-foreground">Position Title</h3>
+                    <p className="text-sm text-primary">Company Name</p>
+                    <p className="text-xs text-muted-foreground mb-2">Jan 2024 - Present</p>
+                    <p className="text-sm text-muted-foreground">
+                      Brief description of your role and responsibilities. Key achievements and technologies used.
+                    </p>
                   </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">M.S. in Computer Science</h3>
-                    <p className="text-sm text-muted-foreground">University Name, 2019 - 2021</p>
-                  </div> */}
-                  <div>
-                    <h3 className="font-medium text-foreground">B.E. in AI & Data Science</h3>
-                    <p className="text-sm text-muted-foreground">SIES Graduate School of Technology, 2022 - Present</p>
+                  <div className="border-l-2 border-secondary pl-4">
+                    <h3 className="font-medium text-foreground">Previous Position</h3>
+                    <p className="text-sm text-primary">Previous Company</p>
+                    <p className="text-xs text-muted-foreground mb-2">Jun 2023 - Dec 2023</p>
+                    <p className="text-sm text-muted-foreground">
+                      Brief description of your role and responsibilities at this position.
+                    </p>
                   </div>
                 </div>
               </section>
