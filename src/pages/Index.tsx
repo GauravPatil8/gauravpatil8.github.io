@@ -8,7 +8,7 @@ const Index = () => {
       title: "Detection-Guided Multimodal Grocery Recognition",
       authors: "Gaurav Patil, Dr.Neetu Sabu, Ayaan Dwivedi, Harsh Chaudhary, Madhavan Nadar",
       venue: "ICICGR 2026",
-      links: { arxiv: "/comingsoon", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
+      links: { arxiv: "/gaurav-portfolio/comingsoon", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
     },
   ];
 
@@ -30,7 +30,7 @@ const Index = () => {
                 <div className="mb-6">
                   <div className="w-32 h-32 rounded-full bg-secondary overflow-hidden mb-4">
                     <img 
-                      src="/profile.jpg" 
+                      src="/gaurav-portfolio/profile.jpg" 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
@@ -51,13 +51,13 @@ const Index = () => {
                   <a href="mailto:patilgauravpradeep@gmail.com" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <Mail size={16} /> patilgauravpradeep@gmail.com
                   </a>
-                  <a href="https://github.com/GauravPatil8" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <a href="https://github.com/GauravPatil8" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <Github size={16} /> github.com
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <a href="/gaurav-portfolio/comingsoon" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <BookOpen size={16} /> Google Scholar
                   </a>
-                  <a href="https://www.linkedin.com/in/gauravpatil8/" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <a href="https://www.linkedin.com/in/gauravpatil8/" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <Linkedin size={16} /> LinkedIn
                   </a>
                 </div>
@@ -108,12 +108,12 @@ const Index = () => {
                           <p className="text-sm text-muted-foreground italic">{pub.venue}</p>
                           <div className="flex gap-3 mt-1">
                             {pub.links.arxiv && (
-                              <a href={pub.links.arxiv} className="text-sm text-primary hover:underline flex items-center gap-1">
+                              <a href={pub.links.arxiv} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
                                 <FileText size={14} /> Paper
                               </a>
                             )}
                             {pub.links.code && (
-                              <a href={pub.links.code} className="text-sm text-primary hover:underline flex items-center gap-1">
+                              <a href={pub.links.code} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
                                 <Github size={14} /> Code
                               </a>
                             )}
@@ -146,12 +146,12 @@ const Index = () => {
                               <h4 className="font-medium text-foreground">{project.title}</h4>
                               <div className="flex gap-2 flex-shrink-0">
                                 {project.github && (
-                                  <a href={project.github} className="text-muted-foreground hover:text-primary transition-colors">
+                                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                                     <Github size={18} />
                                   </a>
                                 )}
                                 {project.paper && (
-                                  <a href={project.paper} className="text-muted-foreground hover:text-primary transition-colors">
+                                  <a href={project.paper} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                                     <ExternalLink size={18} />
                                   </a>
                                 )}
@@ -181,7 +181,7 @@ const Index = () => {
                         {/* Rectangle Thumbnail (16:9) */}
                         <div className="aspect-video bg-secondary overflow-hidden">
                           <img 
-                            src="/placeholder.svg" 
+                            src="/gaurav-portfolio/realorganiser.png" 
                             alt="Real Time Asset Organizer"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -190,18 +190,20 @@ const Index = () => {
                         <div className="p-4">
                           <h4 className="font-medium text-foreground">Real Time Asset Organizer</h4>
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            A productivity tool for managing and organizing digital assets in real-time. Streamline your workflow with instant file tracking and categorization.
+                            A productivity tool for managing and organizing digital assets in real-time.
                           </p>
                           <div className="flex gap-2 mt-3">
                             <a 
-                              href="#" 
+                              href="https://youtu.be/cXZXOYnCE6c" 
+                              target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 text-sm px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
                               title="Watch Demo"
                             >
                               <Youtube size={14} /> Demo
                             </a>
                             <a 
-                              href="#" 
+                              href="https://superhivemarket.com/products/real-time-asset-organiser" 
+                              target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 text-sm px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
                               title="Product Page"
                             >
@@ -239,7 +241,7 @@ const Index = () => {
 
                         <div className="w-12 h-12  rounded  overflow-hidden">
                             <img 
-                              src="/aub.png" 
+                              src="/gaurav-portfolio/aub.png" 
                               alt="Company Logo"
                               className="w-full h-full object-contain p-1"
                             />
@@ -274,7 +276,7 @@ const Index = () => {
                     <div className="flex gap-4">
                     <div className="w-12 h-12 overflow-hidden">
                         <img 
-                          src="/baysquare.png" 
+                          src="/gaurav-portfolio/baysquare.png" 
                           alt="Company Logo"
                           className="w-full h-full object-contain p-1"
                         />

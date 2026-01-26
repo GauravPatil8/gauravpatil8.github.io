@@ -50,7 +50,7 @@ This project serves both as a learning-driven reimplementation of modern neural 
       "Mesh Generation",
       "Geometric Deep Learning",
     ],
-    image: "/meshtron_gif.gif",
+    image: "/gaurav-portfolio/meshtron_gif.gif",
     github: "https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch",
     paper: "https://arxiv.org/abs/2412.09548v1",
     media: [{ type: "video", url: "/meshtron_demo.mp4", caption: "Mesh generation demo" }],
@@ -74,7 +74,7 @@ The system combines YOLO-based object detection with multimodal classification b
 - Custom dataloaders and evaluation tools
 - Achieved 87% Top-1 accuracy on fine-grained product recognition`,
     tags: ["Multimodal AI", "YOLO", "ResNet", "DistilBERT", "PyTorch"],
-    image: "/multimodel_grocery.png",
+    image: "/gaurav-portfolio/multimodel_grocery.png",
     github: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing",
   },
 
@@ -93,7 +93,7 @@ The model was trained and evaluated on the ModelNet10 dataset, achieving 92% cla
 - Real-time inference with interactive visualization
 - Deep dive into permutation invariance and point-based representations`,
     tags: ["PyTorch", "PointNet", "3D Deep Learning", "Point Clouds"],
-    image: "/pointnet.png",
+    image: "/gaurav-portfolio/pointnet.png",
     github: "https://github.com/GauravPatil8/Pointnet-unofficial_implementation",
   },
 
@@ -112,7 +112,7 @@ The system uses an XGBoost classifier trained on curated job post data to distin
 - Strong accuracy and F1 score compared to baselines
 - Practical application in online safety and fraud detection`,
   tags: ["Machine Learning", "XGBoost", "Fraud Detection", "Python"],
-  image: "/scam_sniffer.png",
+  image: "/gaurav-portfolio/scam_sniffer.png",
   github: "https://github.com/GauravPatil8/Scam_Sniffer",
 }
 

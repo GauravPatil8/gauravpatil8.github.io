@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
+import ComingSoon from "./pages/ComingSoon";
 
 const queryClient = new QueryClient();
 
@@ -18,8 +19,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/gaurav-portfolio" element={<Index />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
+            <Route path="/gaurav-portfolio/comingsoon" element = {<ComingSoon/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
