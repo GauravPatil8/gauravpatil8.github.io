@@ -179,8 +179,12 @@ const Index = () => {
                     <div className="space-y-4">
                       <div className="border border-border rounded-lg p-4 bg-card">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <ShoppingBag className="w-6 h-6 text-primary" />
+                          <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden aspect-square">
+                            <img 
+                              src="/placeholder.svg" 
+                              alt="Real Time Asset Organizer"
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-foreground">Real Time Asset Organizer</h4>
