@@ -176,10 +176,10 @@ const Index = () => {
                     <h3 className="text-lg font-semibold text-foreground mb-4">
                       Products
                     </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="border border-border rounded-lg overflow-hidden bg-card group">
-                        {/* Square Image */}
-                        <div className="aspect-square bg-secondary overflow-hidden">
+                        {/* Rectangle Thumbnail (16:9) */}
+                        <div className="aspect-video bg-secondary overflow-hidden">
                           <img 
                             src="/placeholder.svg" 
                             alt="Real Time Asset Organizer"
@@ -187,22 +187,25 @@ const Index = () => {
                           />
                         </div>
                         {/* Content */}
-                        <div className="p-3">
-                          <h4 className="font-medium text-foreground text-sm line-clamp-2">Real Time Asset Organizer</h4>
-                          <div className="flex gap-2 mt-2">
+                        <div className="p-4">
+                          <h4 className="font-medium text-foreground">Real Time Asset Organizer</h4>
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            A productivity tool for managing and organizing digital assets in real-time. Streamline your workflow with instant file tracking and categorization.
+                          </p>
+                          <div className="flex gap-2 mt-3">
                             <a 
                               href="#" 
-                              className="p-1.5 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
+                              className="inline-flex items-center gap-1.5 text-sm px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
                               title="Watch Demo"
                             >
-                              <Youtube size={16} />
+                              <Youtube size={14} /> Demo
                             </a>
                             <a 
                               href="#" 
-                              className="p-1.5 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
+                              className="inline-flex items-center gap-1.5 text-sm px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
                               title="Product Page"
                             >
-                              <ExternalLink size={16} />
+                              <ExternalLink size={14} /> Get it
                             </a>
                           </div>
                         </div>
