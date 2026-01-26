@@ -8,7 +8,7 @@ const Index = () => {
       title: "Detection-Guided Multimodal Grocery Recognition",
       authors: "Gaurav Patil, Dr.Neetu Sabu, Ayaan Dwivedi, Harsh Chaudhary, Madhavan Nadar",
       venue: "ICICGR 2026",
-      links: { arxiv: "/gaurav-portfolio/comingsoon", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
+      links: { arxiv: "./gaurav-portfolio/comingsoon", code: "https://colab.research.google.com/drive/1QuQ7e0mGrz0qiITxG3RjEIynOyoDHtRd?usp=sharing" },
     },
   ];
 
@@ -54,7 +54,7 @@ const Index = () => {
                   <a href="https://github.com/GauravPatil8" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <Github size={16} /> github.com
                   </a>
-                  <a href="/gaurav-portfolio/comingsoon" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <a href="/comingsoon" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
                     <BookOpen size={16} /> Google Scholar
                   </a>
                   <a href="https://www.linkedin.com/in/gauravpatil8/" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
@@ -89,7 +89,7 @@ const Index = () => {
                 {/* Research & Projects Tab */}
                 <TabsContent value="research">
                   {/* Publications */}
-                  <div className="mb-10">
+                  {/* <div className="mb-10">
                     <h3 className="text-lg font-semibold text-foreground mb-4">
                       Publications
                     </h3>
@@ -121,7 +121,7 @@ const Index = () => {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                   
                   {/* Projects */}
                   <div className="mb-10">
@@ -255,7 +255,7 @@ const Index = () => {
                             American University of Beirut
                           </p>
                           <p className="text-xs text-muted-foreground mb-2">
-                            Jan 2025 – Present
+                            Jan 2026 – Present
                           </p>
                           <p className="text-sm text-muted-foreground">
                             Conducting research in deep learning with a focus on representation
