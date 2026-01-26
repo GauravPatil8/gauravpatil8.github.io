@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { Github, Linkedin, Mail, BookOpen, FileText, ExternalLink } from "lucide-react";
+import { Github, Linkedin, Mail, BookOpen, FileText, ExternalLink, Youtube, ShoppingBag } from "lucide-react";
 import { projects } from "@/data/projects";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Index = () => {
@@ -168,6 +168,42 @@ const Index = () => {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+
+                  {/* Products */}
+                  <div className="mb-10">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">
+                      Products
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="border border-border rounded-lg p-4 bg-card">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <ShoppingBag className="w-6 h-6 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-foreground">Real Time Asset Organizer</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              A digital tool for organizing and managing assets in real-time.
+                            </p>
+                            <div className="flex gap-3 mt-3">
+                              <a 
+                                href="#" 
+                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                              >
+                                <Youtube size={16} /> Watch Demo
+                              </a>
+                              <a 
+                                href="#" 
+                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                              >
+                                <ExternalLink size={16} /> Product Page
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
