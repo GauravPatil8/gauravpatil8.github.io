@@ -176,35 +176,34 @@ const Index = () => {
                     <h3 className="text-lg font-semibold text-foreground mb-4">
                       Products
                     </h3>
-                    <div className="space-y-4">
-                      <div className="border border-border rounded-lg p-4 bg-card">
-                        <div className="flex items-start gap-4">
-                          <div className="w-20 h-20 flex-shrink-0 rounded bg-secondary overflow-hidden aspect-square">
-                            <img 
-                              src="/placeholder.svg" 
-                              alt="Real Time Asset Organizer"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-foreground">Real Time Asset Organizer</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              A digital tool for organizing and managing assets in real-time.
-                            </p>
-                            <div className="flex gap-3 mt-3">
-                              <a 
-                                href="#" 
-                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-                              >
-                                <Youtube size={16} /> Watch Demo
-                              </a>
-                              <a 
-                                href="#" 
-                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-                              >
-                                <ExternalLink size={16} /> Product Page
-                              </a>
-                            </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div className="border border-border rounded-lg overflow-hidden bg-card group">
+                        {/* Square Image */}
+                        <div className="aspect-square bg-secondary overflow-hidden">
+                          <img 
+                            src="/placeholder.svg" 
+                            alt="Real Time Asset Organizer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        {/* Content */}
+                        <div className="p-3">
+                          <h4 className="font-medium text-foreground text-sm line-clamp-2">Real Time Asset Organizer</h4>
+                          <div className="flex gap-2 mt-2">
+                            <a 
+                              href="#" 
+                              className="p-1.5 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
+                              title="Watch Demo"
+                            >
+                              <Youtube size={16} />
+                            </a>
+                            <a 
+                              href="#" 
+                              className="p-1.5 rounded bg-secondary text-muted-foreground hover:text-primary transition-colors"
+                              title="Product Page"
+                            >
+                              <ExternalLink size={16} />
+                            </a>
                           </div>
                         </div>
                       </div>
