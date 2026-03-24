@@ -17,12 +17,10 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  // =========================
-  // DO NOT TOUCH — MeshTron
-  // =========================
+
   {
     id: "meshtron",
-    title: "MeshTron: 3D Mesh Generation from Point Clouds",
+    title: "Nvidia MeshTron: 3D Mesh Generation from Point Clouds",
     description:
       "End-to-end implementation of a neural pipeline for generating high-quality triangle meshes directly from unstructured point clouds.",
     longDescription: `MeshTron is a research-focused implementation inspired by NVIDIA’s Meshtron approach, aimed at converting raw 3D point clouds into coherent, watertight triangle meshes using deep learning.

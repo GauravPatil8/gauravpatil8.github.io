@@ -21,7 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/gaurav-portfolio" element={<Index />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
-            <Route path="/comingsoon" element = {<ComingSoon/>} />
+            <Route path="/gaurav-portfolio/comingsoon" element = {<ComingSoon/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
