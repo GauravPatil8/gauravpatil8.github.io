@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Github, ExternalLink } from "lucide-react";
 import { projects, ProjectMedia } from "@/data/projects";
+import { withBase } from "@/lib/paths";
 
 const MediaItem = ({ media }: { media: ProjectMedia }) => {
   if (media.type === "youtube") {
@@ -36,7 +37,7 @@ const MediaItem = ({ media }: { media: ProjectMedia }) => {
       <div className="my-6">
         <div className="w-full rounded-lg overflow-hidden bg-secondary">
           <video
-            src={media.url}
+            src={withBase(media.url)}
             controls
             className="w-full h-auto"
           >
@@ -55,7 +56,7 @@ const MediaItem = ({ media }: { media: ProjectMedia }) => {
     <div className="my-6">
       <div className="w-full rounded-lg overflow-hidden bg-secondary">
         <img
-          src={media.url}
+          src={withBase(media.url)}
           alt={media.caption || "Project media"}
           className="w-full h-auto object-cover"
         />

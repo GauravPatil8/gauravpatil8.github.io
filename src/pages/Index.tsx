@@ -11,6 +11,7 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { projects } from "@/data/projects";
+import { withBase } from "@/lib/paths";
 
 const Index = () => {
   const highlightAuthor = (authors: string) =>
@@ -67,7 +68,7 @@ const Index = () => {
                 <div className="mb-6">
                   <div className="mb-4 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-secondary">
                     <img
-                      src="/gaurav-portfolio/profile.jpg"
+                      src={withBase("profile.jpg")}
                       alt="Profile"
                       className="h-full w-full object-cover"
                     />
@@ -244,7 +245,7 @@ const Index = () => {
                     <div className="group overflow-hidden rounded-lg bg-card">
                       <div className="aspect-video overflow-hidden bg-secondary">
                         <img
-                          src="/gaurav-portfolio/realorganiser.png"
+                          src={withBase("realorganiser.png")}
                           alt="Real Time Asset Organizer"
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
@@ -302,7 +303,7 @@ const Index = () => {
                       <div className="flex gap-4">
                         <div className="h-12 w-12 overflow-hidden rounded bg-background">
                           <img
-                            src="/gaurav-portfolio/aub.png"
+                            src={withBase("aub.png")}
                             alt="Company Logo"
                             className="h-full w-full object-contain p-1"
                           />
@@ -325,7 +326,7 @@ const Index = () => {
                       <div className="flex gap-4">
                         <div className="h-12 w-12 overflow-hidden rounded bg-background">
                           <img
-                            src="/gaurav-portfolio/baysquare.png"
+                            src={withBase("baysquare.png")}
                             alt="Company Logo"
                             className="h-full w-full object-contain p-1"
                           />
