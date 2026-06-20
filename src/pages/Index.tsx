@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
   BookOpen,
@@ -20,6 +20,202 @@ type ResearchLogStatus = "Working on" | "Worked on" | "Currently reading" | "Rea
 type IconProps = {
   size?: number;
   className?: string;
+};
+
+type PointerState = {
+  x: number;
+  y: number;
+  targetX: number;
+  targetY: number;
+  active: number;
+  targetActive: number;
+};
+
+const VectorFieldBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pointerRef = useRef<PointerState>({
+    x: 0.5,
+    y: 0.38,
+    targetX: 0.5,
+    targetY: 0.38,
+    active: 0,
+    targetActive: 0,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+
+    if (!canvas) {
+      return;
+    }
+
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      return;
+    }
+
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const pointer = pointerRef.current;
+    let animationFrame = 0;
+    let width = 0;
+    let height = 0;
+    let pixelRatio = 1;
+    let elapsed = 0;
+
+    const resizeCanvas = () => {
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * pixelRatio);
+      canvas.height = Math.floor(height * pixelRatio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      pointer.targetX = event.clientX / Math.max(width, 1);
+      pointer.targetY = event.clientY / Math.max(height, 1);
+      pointer.targetActive = 1;
+
+      if (motionQuery.matches) {
+        window.requestAnimationFrame(render);
+      }
+    };
+
+    const handlePointerLeave = () => {
+      pointer.targetActive = 0;
+    };
+
+    const drawArrow = (
+      x: number,
+      y: number,
+      vectorX: number,
+      vectorY: number,
+      magnitude: number,
+      hue: number,
+      influence: number,
+      seed: number,
+    ) => {
+      const angle = Math.atan2(vectorY, vectorX);
+      const length = 8 + Math.min(magnitude * 18, 18);
+      const endX = x + Math.cos(angle) * length;
+      const endY = y + Math.sin(angle) * length;
+      const curve = Math.sin(seed * Math.PI * 2) * 2.5 + influence * 5.5;
+      const controlX = (x + endX) * 0.5 - Math.sin(angle) * curve;
+      const controlY = (y + endY) * 0.5 + Math.cos(angle) * curve;
+      const alpha = 0.08 + Math.min(magnitude * 0.18, 0.18) + influence * 0.06;
+
+      context.strokeStyle = `hsla(${hue}, 78%, 67%, ${alpha})`;
+      context.lineWidth = 0.85 + influence * 0.45;
+      context.beginPath();
+      context.moveTo(x, y);
+      context.quadraticCurveTo(controlX, controlY, endX, endY);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(endX, endY);
+      context.lineTo(endX - Math.cos(angle - 0.55) * 4, endY - Math.sin(angle - 0.55) * 4);
+      context.moveTo(endX, endY);
+      context.lineTo(endX - Math.cos(angle + 0.55) * 4, endY - Math.sin(angle + 0.55) * 4);
+      context.stroke();
+    };
+
+    const drawTwinkle = (x: number, y: number, hue: number, seed: number, influence: number) => {
+      if (seed < 0.58) {
+        return;
+      }
+
+      const shimmer = motionQuery.matches ? 0.45 : (Math.sin(elapsed * 1.2 + seed * 12) + 1) * 0.5;
+      const radius = 0.7 + seed * 1.1 + influence * 0.8;
+      const alpha = 0.025 + shimmer * 0.07 + influence * 0.06;
+
+      context.fillStyle = `hsla(${hue}, 82%, 76%, ${alpha})`;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    };
+
+    const render = () => {
+      pointer.x += (pointer.targetX - pointer.x) * 0.08;
+      pointer.y += (pointer.targetY - pointer.y) * 0.08;
+      pointer.active += (pointer.targetActive - pointer.active) * 0.06;
+
+      context.clearRect(0, 0, width, height);
+
+      const spacing = width < 640 ? 46 : 54;
+
+      for (let y = -spacing; y < height + spacing; y += spacing) {
+        for (let x = -spacing; x < width + spacing; x += spacing) {
+          const nx = x / Math.max(width, 1);
+          const ny = y / Math.max(height, 1);
+          const dx = nx - pointer.x;
+          const dy = ny - pointer.y;
+          const distance = Math.hypot(dx, dy) + 0.035;
+          const falloff = Math.min(1 / (distance * 3.2), 2.4) * pointer.active;
+          const localInfluence = Math.max(0, 1 - distance * 4.2) * pointer.active;
+
+          const sourceX = dx / distance;
+          const sourceY = dy / distance;
+          const curlX = -dy / distance;
+          const curlY = dx / distance;
+          const waveX = Math.sin(ny * 16) * 0.18;
+          const waveY = Math.cos(nx * 15) * 0.18;
+
+          const vectorX = waveX + sourceX * (0.32 + falloff * 0.95) + curlX * (0.54 + falloff * 1.25);
+          const vectorY = waveY + sourceY * (0.28 + falloff * 0.85) + curlY * (0.5 + falloff * 1.2);
+          const magnitude = Math.hypot(vectorX, vectorY);
+          const hue = 178 + Math.min(falloff * 54, 54);
+          const jitterX = Math.sin(y * 0.014) * 2;
+          const jitterY = Math.cos(x * 0.012) * 2;
+          const seed = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+          const normalizedSeed = seed - Math.floor(seed);
+          const drawX = x + jitterX;
+          const drawY = y + jitterY;
+
+          drawTwinkle(drawX, drawY, hue, normalizedSeed, localInfluence);
+          drawArrow(
+            drawX,
+            drawY,
+            vectorX,
+            vectorY,
+            magnitude + localInfluence,
+            hue,
+            localInfluence,
+            normalizedSeed,
+          );
+        }
+      }
+
+      if (!motionQuery.matches) {
+        elapsed += 0.01;
+        animationFrame = window.requestAnimationFrame(render);
+      }
+    };
+
+    resizeCanvas();
+    render();
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerleave", handlePointerLeave);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-0 opacity-65 mix-blend-screen"
+    />
+  );
 };
 
 const HuggingFaceIcon = ({ size = 16, className }: IconProps) => (
@@ -119,8 +315,9 @@ const Index = () => {
         <meta name="description" content={siteData.seo.description} />
       </Helmet>
 
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="relative mx-auto max-w-7xl px-6 py-16">
+      <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+        <VectorFieldBackground />
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-16">
           <div className="flex flex-col gap-12 lg:flex-row lg:gap-8 xl:gap-9">
             <aside className="lg:w-60 lg:flex-shrink-0 xl:w-64">
               <div className="lg:sticky lg:top-16">
