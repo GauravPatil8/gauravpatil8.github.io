@@ -358,7 +358,7 @@ const Index = () => {
                   })}
                 </div>
 
-                <div>
+                {/* <div>
                   <h2 className="mb-3 text-sm font-medium text-foreground">
                     {siteData.labels.sections.researchInterests}
                   </h2>
@@ -367,7 +367,7 @@ const Index = () => {
                       <li key={interest}>{interest}</li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
               </div>
             </aside>
 

@@ -47,11 +47,6 @@
       "icon": "github"
     },
     {
-      "label": "Google Scholar",
-      "href": "#",
-      "icon": "book"
-    },
-    {
       "label": "LinkedIn",
       "href": "https://www.linkedin.com/in/gauravpatil8/",
       "icon": "linkedin"
@@ -129,7 +124,7 @@
       "title": "Deep Learning Research Intern",
       "company": "Chehab Lab @ American University of Beirut",
       "date": "Jan 2026 - Jun 2026",
-      "description": "Working on 2D computer vision, assisting the team in tackling an active research problem.",
+      "description": "Got to work with 15 image encoders, benchmarked their stability to input perturbation under 14 different perturbation types. Authored a research paper about the results obtained from the benchmark run (it got accepted at ICANN'26). Also worked on other research projects involving analyzing representation collapse of image encoders on medical imaging, curating brain MRI volumes scans into clean extracted slices and pushing them on huggingface repo in tabular format (I curated 3 of em). Overall, learnt a lot about deep learning research in academic setting and most importantly, I had fun",
       "logo": "aub.png"
     },
     {
