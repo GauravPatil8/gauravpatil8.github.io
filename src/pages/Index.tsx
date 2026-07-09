@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
-  BookOpen,
+  ChevronLeft,
   ExternalLink,
   FileText,
   Github,
@@ -10,12 +10,10 @@ import {
   Youtube,
 } from "lucide-react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProjectDetailView from "@/components/ProjectDetailView";
 import { projects } from "@/data/projects";
 import siteData from "@/data/site.json";
 import { withBase } from "@/lib/paths";
-
-type ResearchLogStatus = "Working on" | "Worked on" | "Currently reading" | "Read";
 
 type IconProps = {
   size?: number;
@@ -253,21 +251,11 @@ const HuggingFaceIcon = ({ size = 16, className }: IconProps) => (
 );
 
 const Index = () => {
-  const [showAllResearchLog, setShowAllResearchLog] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<string | null>("meshtron");
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
-  const statusStyles: Record<ResearchLogStatus, string> = {
-    "Working on": "border-cyan-300/25 bg-cyan-300/10 text-cyan-200",
-    "Worked on": "border-green-300/25 bg-green-300/10 text-green-200",
-    "Currently reading": "border-violet-300/20 bg-violet-300/10 text-violet-200",
-    Read: "border-red-300/20 bg-red-300/10 text-red-200",
-  };
-
-  const statusDotStyles: Record<ResearchLogStatus, string> = {
-    "Working on": "bg-cyan-300",
-    "Worked on": "bg-green-300",
-    "Currently reading": "bg-violet-300",
-    Read: "bg-red-300",
-  };
+  // Determines whether sidebar+detail layout is shown
+  const isDetailView = selectedProject !== null || selectedSection !== null;
 
   const projectTagStyles = [
     "border-cyan-300/20 bg-cyan-300/10 text-cyan-200",
@@ -280,7 +268,6 @@ const Index = () => {
   const socialIcons = {
     mail: Mail,
     github: Github,
-    book: BookOpen,
     linkedin: Linkedin,
     huggingface: HuggingFaceIcon,
   };
@@ -298,15 +285,347 @@ const Index = () => {
       );
     });
 
-  const researchLog = siteData.researchLog as {
-    status: ResearchLogStatus;
-    date: string;
-    title: string;
-    note: string;
-  }[];
+  const selectedProjectData = projects.find((project) => project.id === selectedProject) ?? null;
+  const sectionLinks = [
+    { id: "publications", label: siteData.labels.sections.publications },
+    { id: "experience", label: siteData.labels.sections.experience },
+    { id: "products", label: siteData.labels.sections.products },
+    { id: "education", label: siteData.labels.sections.education },
+  ];
 
-  const visibleResearchLog = showAllResearchLog ? researchLog : researchLog.slice(0, 2);
-  const hasMoreResearchLog = researchLog.length > 2;
+  const renderSectionContent = () => {
+    if (!selectedSection) {
+      return null;
+    }
+
+    if (selectedSection === "publications") {
+      return (
+        <div className="space-y-4">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold text-foreground">{siteData.labels.sections.publications}</h3>
+          </div>
+          <div className="grid gap-4">
+            {siteData.publications.map((pub, index) => (
+              <div key={index} className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+                <h4 className="font-medium text-foreground">{pub.title}</h4>
+                <p className="mt-2 text-sm text-muted-foreground">{highlightAuthor(pub.authors)}</p>
+                <p className="mt-1 text-sm italic text-muted-foreground">{pub.venue}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {pub.links.arxiv && (
+                    <a href={pub.links.arxiv} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-primary transition-colors hover:border-primary/30">
+                      <FileText size={14} /> {siteData.labels.actions.paper}
+                    </a>
+                  )}
+                  {!pub.links.arxiv && (
+                    <span className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground">
+                      <FileText size={14} /> {siteData.labels.actions.comingSoon}
+                    </span>
+                  )}
+                  {pub.links.code && (
+                    <a href={pub.links.code} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-primary transition-colors hover:border-primary/30">
+                      <Github size={14} /> {siteData.labels.actions.code}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedSection === "experience") {
+      return (
+        <div className="space-y-4">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold text-foreground">{siteData.labels.sections.experience}</h3>
+          </div>
+          <div className="space-y-4">
+            {siteData.experience.map((job) => (
+              <div key={`${job.title}-${job.company}`} className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+                <div className="flex gap-4">
+                  <div className="h-12 w-12 overflow-hidden rounded-xl border border-border/60 bg-background/80">
+                    <img src={withBase(job.logo)} alt="Company Logo" className="h-full w-full object-contain p-1" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-foreground">{job.title}</h3>
+                    <p className="text-sm text-primary">{job.company}</p>
+                    <p className="mb-2 text-xs text-muted-foreground">{job.date}</p>
+                    <p className="text-sm text-muted-foreground">{job.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedSection === "products") {
+      return (
+        <div className="space-y-4">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold text-foreground">{siteData.labels.sections.products}</h3>
+          </div>
+          <div className="space-y-4">
+            {siteData.products.map((product) => (
+              <div key={product.title} className="group flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-card/70 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset] transition-all duration-300 hover:border-primary/30 sm:flex-row">
+                <div className="aspect-video overflow-hidden bg-secondary/70 sm:w-64 sm:flex-shrink-0 lg:w-72">
+                  <img src={withBase(product.image)} alt={product.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col justify-center p-4">
+                  <h4 className="font-medium text-foreground">{product.title}</h4>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <a href={product.demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary" title="Watch Demo">
+                      <Youtube size={14} /> {siteData.labels.actions.demo}
+                    </a>
+                    <a href={product.productPage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary" title="Product Page">
+                      <ExternalLink size={14} /> {siteData.labels.actions.buy}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <h3 className="text-xl font-semibold text-foreground">{siteData.labels.sections.education}</h3>
+        </div>
+        <div className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+          {siteData.education.map((item) => (
+            <div key={`${item.degree}-${item.school}`}>
+              <h4 className="font-medium text-foreground">{item.degree}</h4>
+              <p className="text-sm text-muted-foreground">{item.school}, {item.date}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  /* ---- Sidebar rendered for both project-detail and section-detail views ---- */
+  const renderSidebar = () => (
+    <div className="rounded-2xl border border-primary/10 bg-card/60 p-3 lg:sticky lg:top-4">
+      {/* Projects list */}
+      <div className="mb-3 flex items-center justify-between gap-3 px-1">
+        <h3 className="text-sm font-medium text-foreground">Projects</h3>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedProject(null);
+            setSelectedSection(null);
+          }}
+          className="text-xs text-muted-foreground transition-colors hover:text-primary"
+        >
+          View all
+        </button>
+      </div>
+
+      <div className="space-y-2">
+        {projects.map((project) => {
+          const isActive = selectedProject === project.id && !selectedSection;
+
+          return (
+            <button
+              key={project.id}
+              type="button"
+              onClick={() => {
+                setSelectedProject(project.id);
+                setSelectedSection(null);
+              }}
+              className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left transition-all duration-200 ${isActive
+                ? "border-primary/25 bg-primary/[0.07]"
+                : "border-transparent bg-background/30 hover:border-primary/20 hover:bg-card"
+                }`}
+            >
+              <div className="aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-secondary">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h4 className="truncate text-sm font-medium text-foreground">
+                  {project.title}
+                </h4>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  {project.tags[0]}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Publications */}
+      <div className="mt-4 border-t border-border/60 pt-3">
+        <button
+          type="button"
+          onClick={() => setSelectedSection("publications")}
+          className="mb-2 flex w-full items-center justify-between px-1"
+        >
+          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.publications}</h3>
+          <span className="text-xs text-primary">→</span>
+        </button>
+        <div className="space-y-1.5">
+          {siteData.publications.map((pub, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setSelectedSection("publications")}
+              className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors ${
+                selectedSection === "publications"
+                  ? "bg-primary/10 text-foreground"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+              }`}
+            >
+              <span className="mt-0.5 flex-shrink-0 text-primary">•</span>
+              <span className="line-clamp-2">{pub.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Work Experience */}
+      <div className="mt-4 border-t border-border/60 pt-3">
+        <button
+          type="button"
+          onClick={() => setSelectedSection("experience")}
+          className="mb-2 flex w-full items-center justify-between px-1"
+        >
+          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.experience}</h3>
+          <span className="text-xs text-primary">→</span>
+        </button>
+        <div className="space-y-1.5">
+          {siteData.experience.map((job) => (
+            <button
+              key={`${job.title}-${job.company}`}
+              type="button"
+              onClick={() => setSelectedSection("experience")}
+              className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors ${
+                selectedSection === "experience"
+                  ? "bg-primary/10"
+                  : "hover:bg-background/50"
+              }`}
+            >
+              <div className="h-6 w-6 flex-shrink-0 overflow-hidden rounded border border-border/40 bg-background/80">
+                <img src={withBase(job.logo)} alt="" className="h-full w-full object-contain p-0.5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-medium text-foreground">{job.title}</p>
+                <p className="truncate text-[10px] text-muted-foreground">{job.company}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Products */}
+      <div className="mt-4 border-t border-border/60 pt-3">
+        <button
+          type="button"
+          onClick={() => setSelectedSection("products")}
+          className="mb-2 flex w-full items-center justify-between px-1"
+        >
+          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.products}</h3>
+          <span className="text-xs text-primary">→</span>
+        </button>
+        <div className="space-y-1.5">
+          {siteData.products.map((product) => (
+            <button
+              key={product.title}
+              type="button"
+              onClick={() => setSelectedSection("products")}
+              className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors ${
+                selectedSection === "products"
+                  ? "bg-primary/10 text-foreground"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+              }`}
+            >
+              <span className="mt-0.5 flex-shrink-0 text-primary">•</span>
+              <span className="truncate">{product.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Education */}
+      <div className="mt-4 border-t border-border/60 pt-3">
+        <h3 className="mb-2 px-1 text-sm font-medium text-foreground">{siteData.labels.sections.education}</h3>
+        <div className="space-y-1.5">
+          {siteData.education.map((item) => (
+            <button
+              key={`${item.degree}-${item.school}`}
+              type="button"
+              onClick={() => setSelectedSection("education")}
+              className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors ${
+                selectedSection === "education"
+                  ? "bg-primary/10"
+                  : "hover:bg-background/50"
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-medium text-foreground">{item.degree}</p>
+                <p className="truncate text-[10px] text-muted-foreground">{item.school}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ---- Main content area (right side of sidebar) ---- */
+  const renderMainContent = () => {
+    // If a section is selected, show section content
+    if (selectedSection) {
+      return (
+        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:min-h-[48rem] lg:p-7">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setSelectedSection(null)}
+              className="absolute right-0 top-0 z-10 hidden rounded-full border border-border/60 bg-background/70 px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary lg:inline-flex"
+            >
+              Close
+            </button>
+            {renderSectionContent()}
+          </div>
+        </div>
+      );
+    }
+
+    // Otherwise show the selected project detail
+    if (selectedProjectData) {
+      return (
+        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:min-h-[48rem] lg:p-7">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedProject(null);
+                setSelectedSection(null);
+              }}
+              className="absolute right-0 top-0 z-10 hidden rounded-full border border-border/60 bg-background/70 px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary lg:inline-flex"
+            >
+              Close
+            </button>
+            <ProjectDetailView project={selectedProjectData} />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -317,172 +636,100 @@ const Index = () => {
 
       <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
         <VectorFieldBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-16">
-          <div className="flex flex-col gap-12 lg:flex-row lg:gap-8 xl:gap-9">
-            <aside className="lg:w-60 lg:flex-shrink-0 xl:w-64">
-              <div className="lg:sticky lg:top-16">
-                <div className="mb-6">
-                  <div className="mb-4 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-secondary">
-                    <img
-                      src={withBase(siteData.profile.image)}
-                      alt="Profile"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-14">
+          <header className="mb-10 rounded-lg border border-primary/10 bg-card/70 p-5 shadow-sm shadow-black/20">
+            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-secondary md:h-28 md:w-28">
+                  <img
+                    src={withBase(siteData.profile.image)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
 
-                  <h1 className="text-4xl font-semibold leading-none text-foreground">
+                <div className="max-w-3xl">
+                  <h1 className="text-3xl md:text-4xl font-semibold leading-none text-foreground">
                     {siteData.profile.name}
                   </h1>
                   <p className="mt-2 text-primary">{siteData.profile.title}</p>
                   <p className="text-sm text-muted-foreground">{siteData.profile.affiliation}</p>
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground">
+                    {siteData.profile.bio}
+                  </p>
                 </div>
-
-                <p className="mb-6 text-sm leading-relaxed text-foreground">{siteData.profile.bio}</p>
-
-                <div className="mb-8 flex flex-col gap-2">
-                  {siteData.socialLinks.map((link) => {
-                    const Icon = socialIcons[link.icon as keyof typeof socialIcons] ?? ExternalLink;
-                    const isMailLink = link.href.startsWith("mailto:");
-
-                    return (
-                      <a
-                        key={`${link.label}-${link.href}`}
-                        href={link.href}
-                        target={isMailLink ? undefined : "_blank"}
-                        rel={isMailLink ? undefined : "noopener noreferrer"}
-                        className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
-                      >
-                        <Icon size={16} /> {link.label}
-                      </a>
-                    );
-                  })}
-                </div>
-
-                {/* <div>
-                  <h2 className="mb-3 text-sm font-medium text-foreground">
-                    {siteData.labels.sections.researchInterests}
-                  </h2>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {siteData.researchInterests.map((interest) => (
-                      <li key={interest}>{interest}</li>
-                    ))}
-                  </ul>
-                </div> */}
               </div>
-            </aside>
 
-            <Tabs defaultValue="research" className="min-w-0 flex-[1_1_44rem]">
-              <TabsList className="mb-8 grid h-auto w-full grid-cols-3 rounded-md border border-primary/10 bg-secondary/80 p-1 shadow-sm shadow-black/20">
-                <TabsTrigger
-                  value="research"
-                  className="h-auto w-full whitespace-normal px-2 py-2 text-center text-xs leading-tight sm:px-5 sm:text-sm"
-                >
-                  {siteData.labels.tabs.research}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="experience"
-                  className="h-auto w-full whitespace-normal px-2 py-2 text-center text-xs leading-tight sm:px-5 sm:text-sm"
-                >
-                  {siteData.labels.tabs.experience}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="product"
-                  className="h-auto w-full whitespace-normal px-2 py-2 text-center text-xs leading-tight sm:px-5 sm:text-sm"
-                >
-                  {siteData.labels.tabs.product}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="product">
-                <div className="mb-10">
-                  <h3 className="mb-4 text-lg text-foreground">{siteData.labels.sections.products}</h3>
-                  <div className="grid grid-cols-1 gap-4 pl-2 sm:grid-cols-2">
-                    {siteData.products.map((product) => (
-                    <div key={product.title} className="group overflow-hidden rounded-lg bg-card">
-                      <div className="aspect-video overflow-hidden bg-secondary">
-                        <img
-                          src={withBase(product.image)}
-                          alt={product.title}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h4 className="font-medium text-foreground">{product.title}</h4>
-                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
-                        <div className="mt-3 flex gap-2">
-                          <a
-                            href={product.demo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-primary"
-                            title="Watch Demo"
-                          >
-                            <Youtube size={14} /> {siteData.labels.actions.demo}
-                          </a>
-                          <a
-                            href={product.productPage}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-primary"
-                            title="Product Page"
-                          >
-                            <ExternalLink size={14} /> {siteData.labels.actions.buy}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    ))}
+              <div className="flex flex-wrap gap-3 md:max-w-xs md:justify-end">
+                {siteData.socialLinks.map((link) => {
+                  const Icon = socialIcons[link.icon as keyof typeof socialIcons] ?? ExternalLink;
+                  const isMailLink = link.href.startsWith("mailto:");
+
+                  return (
+                    <a
+                      key={`${link.label}-${link.href}`}
+                      href={link.href}
+                      target={isMailLink ? undefined : "_blank"}
+                      rel={isMailLink ? undefined : "noopener noreferrer"}
+                      className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/70 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+                    >
+                      <Icon size={16} /> <span className="hidden sm:inline">{link.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </header>
+
+          <div className="grid gap-8">
+            <section>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-2xl font-medium text-foreground">{siteData.labels.sections.projects}</h2>
+              </div>
+
+              {isDetailView ? (
+                <div>
+                  {/* Mobile: back button + full-width content (no sidebar) */}
+                  <div className="lg:hidden">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (selectedSection) {
+                          setSelectedSection(null);
+                        } else {
+                          setSelectedProject(null);
+                          setSelectedSection(null);
+                        }
+                      }}
+                      className="mb-4 inline-flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 px-3 py-1.5 text-sm text-foreground transition-colors hover:border-primary/30 hover:text-primary"
+                    >
+                      <ChevronLeft size={14} />
+                      Back
+                    </button>
+                    {renderMainContent()}
+                  </div>
+
+                  {/* Desktop: sidebar + content grid */}
+                  <div className="hidden gap-5 lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:items-start">
+                    {renderSidebar()}
+                    {renderMainContent()}
                   </div>
                 </div>
-              </TabsContent>
-              <TabsContent value="research">
-                <div className="mb-10">
-                  <h3 className="mb-4 text-lg text-foreground">
-                    {siteData.labels.sections.publications}
-                  </h3>
-                  <div className="space-y-6">
-                    {siteData.publications.map((pub, index) => (
-                      <div key={index}>
-                        <h4 className="font-medium text-foreground">{pub.title}</h4>
-                        <p className="text-sm text-muted-foreground">{highlightAuthor(pub.authors)}</p>
-                        <p className="text-sm italic text-muted-foreground">{pub.venue}</p>
-                        <div className="mt-2 flex flex-wrap gap-4">
-                          {pub.links.arxiv && (
-                            <a
-                              href={pub.links.arxiv}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-sm text-primary hover:underline"
-                            >
-                              <FileText size={14} /> {siteData.labels.actions.paper}
-                            </a>
-                          )}
-                          {!pub.links.arxiv && (
-                            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                              <FileText size={14} /> {siteData.labels.actions.comingSoon}
-                            </span>
-                          )}
-                          {pub.links.code && (
-                            <a
-                              href={pub.links.code}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-sm text-primary hover:underline"
-                            >
-                              <Github size={14} /> {siteData.labels.actions.code}
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mb-10 pt-5">
-                  <h3 className="mb-4 text-lg text-foreground">{siteData.labels.sections.projects}</h3>
-                  <div className="space-y-6">
-                    {projects.map((project, index) => (
-                      <div key={index} className="flex gap-4">
-                        <div className="aspect-square h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-secondary">
+              ) : (
+                <div className="space-y-8">
+                  {/* Projects list */}
+                  <div className="space-y-3">
+                    {projects.map((project) => (
+                      <button
+                        key={project.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedProject(project.id);
+                          setSelectedSection(null);
+                        }}
+                        className="flex w-full gap-4 rounded-[1.25rem] border border-transparent bg-card/60 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-card"
+                      >
+                        <div className="aspect-square h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-secondary sm:h-20 sm:w-20">
                           <img
                             src={project.image}
                             alt={project.title}
@@ -492,7 +739,7 @@ const Index = () => {
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-4">
-                            <h4 className="font-medium text-foreground">{project.title}</h4>
+                            <h3 className="font-medium text-foreground">{project.title}</h3>
                             <div className="flex flex-shrink-0 items-center gap-2">
                               {project.github && (
                                 <a
@@ -500,6 +747,7 @@ const Index = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-muted-foreground transition-colors hover:text-primary"
+                                  onClick={(event) => event.stopPropagation()}
                                 >
                                   <Github size={18} />
                                 </a>
@@ -510,6 +758,7 @@ const Index = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-muted-foreground transition-colors hover:text-primary"
+                                  onClick={(event) => event.stopPropagation()}
                                 >
                                   <ExternalLink size={18} />
                                 </a>
@@ -518,116 +767,139 @@ const Index = () => {
                           </div>
                           <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
                           <div className="mt-3 flex flex-wrap gap-2">
-                            {project.tags.map((tag, tagIndex) => (
+                            {project.tags.slice(0, 3).map((tag, tagIndex) => (
                               <span
                                 key={tag}
-                                className={`rounded border px-2 py-0.5 text-xs ${projectTagStyles[tagIndex % projectTagStyles.length]}`}
+                                className={`rounded-full border px-2 py-0.5 text-[11px] ${projectTagStyles[tagIndex % projectTagStyles.length]}`}
                               >
                                 {tag}
                               </span>
                             ))}
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
-                </div>
 
-                <div>
-                  <h3 className="mb-4 text-lg text-foreground">{siteData.labels.sections.education}</h3>
-                  <div className="space-y-4">
-                    <div>
-                      {siteData.education.map((item) => (
-                        <div key={`${item.degree}-${item.school}`}>
-                          <h4 className="font-medium text-foreground">{item.degree}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {item.school}, {item.date}
-                          </p>
+                  {/* Publications */}
+                  <section>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection("publications")}
+                      className="group mb-4 flex items-center gap-2 text-2xl font-medium text-foreground transition-colors hover:text-primary"
+                    >
+                      {siteData.labels.sections.publications}
+                      <span className="text-base text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                    </button>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {siteData.publications.map((pub, index) => (
+                        <div key={index} className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+                          <h4 className="font-medium text-foreground">{pub.title}</h4>
+                          <p className="mt-2 text-sm text-muted-foreground">{highlightAuthor(pub.authors)}</p>
+                          <p className="mt-1 text-sm italic text-muted-foreground">{pub.venue}</p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {pub.links.arxiv && (
+                              <a href={pub.links.arxiv} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-primary transition-colors hover:border-primary/30">
+                                <FileText size={14} /> {siteData.labels.actions.paper}
+                              </a>
+                            )}
+                            {!pub.links.arxiv && (
+                              <span className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground">
+                                <FileText size={14} /> {siteData.labels.actions.comingSoon}
+                              </span>
+                            )}
+                            {pub.links.code && (
+                              <a href={pub.links.code} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-primary transition-colors hover:border-primary/30">
+                                <Github size={14} /> {siteData.labels.actions.code}
+                              </a>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-              </TabsContent>
+                  </section>
 
-              <TabsContent value="experience">
-                <main className="min-w-0 flex-1">
-                  <div className="space-y-6">
-                    <h3 className="mb-4 text-lg text-foreground">
+                  {/* Work Experience */}
+                  <section>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection("experience")}
+                      className="group mb-4 flex items-center gap-2 text-2xl font-medium text-foreground transition-colors hover:text-primary"
+                    >
                       {siteData.labels.sections.experience}
-                    </h3>
-
-                    {siteData.experience.map((job) => (
-                    <div key={`${job.title}-${job.company}`}>
-                      <div className="flex gap-4">
-                        <div className="h-12 w-12 overflow-hidden rounded bg-background">
-                          <img
-                            src={withBase(job.logo)}
-                            alt="Company Logo"
-                            className="h-full w-full object-contain p-1"
-                          />
+                      <span className="text-base text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                    </button>
+                    <div className="space-y-4">
+                      {siteData.experience.map((job) => (
+                        <div key={`${job.title}-${job.company}`} className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+                          <div className="flex gap-4">
+                            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border border-border/60 bg-background/80">
+                              <img src={withBase(job.logo)} alt="Company Logo" className="h-full w-full object-contain p-1" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-medium text-foreground">{job.title}</h3>
+                              <p className="text-sm text-primary">{job.company}</p>
+                              <p className="mb-2 text-xs text-muted-foreground">{job.date}</p>
+                              <p className="text-sm text-muted-foreground">{job.description}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="font-medium text-foreground">{job.title}</h3>
-                          <p className="text-sm text-primary">{job.company}</p>
-                          <p className="mb-2 text-xs text-muted-foreground">{job.date}</p>
-                          <p className="text-sm text-muted-foreground">{job.description}</p>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Products */}
+                  <section>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection("products")}
+                      className="group mb-4 flex items-center gap-2 text-2xl font-medium text-foreground transition-colors hover:text-primary"
+                    >
+                      {siteData.labels.sections.products}
+                      <span className="text-base text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                    </button>
+                    <div className="space-y-4">
+                      {siteData.products.map((product) => (
+                        <div key={product.title} className="group flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-card/70 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset] transition-all duration-300 hover:border-primary/30 sm:flex-row">
+                          <div className="aspect-video overflow-hidden bg-secondary/70 sm:w-64 sm:flex-shrink-0 lg:w-72">
+                            <img src={withBase(product.image)} alt={product.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                          </div>
+                          <div className="flex min-w-0 flex-1 flex-col justify-center p-4">
+                            <h4 className="font-medium text-foreground">{product.title}</h4>
+                            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <a href={product.demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary" title="Watch Demo">
+                                <Youtube size={14} /> {siteData.labels.actions.demo}
+                              </a>
+                              <a href={product.productPage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary" title="Product Page">
+                                <ExternalLink size={14} /> {siteData.labels.actions.buy}
+                              </a>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                    ))}
-                  </div>
-                </main>
-              </TabsContent>
-            </Tabs>
+                  </section>
 
-            <aside className="hidden lg:w-64 lg:flex-shrink-0 xl:w-[17rem]">
-              <div className="rounded-lg border border-primary/10 bg-card/70 p-5 shadow-sm shadow-black/20 lg:sticky lg:top-16">
-                <div className="mb-5 flex items-start justify-between gap-3 border-b border-border/70 pb-4">
-                  <div>
-                    <h3 className="flex items-center gap-2 text-lg text-foreground">
-                      <BookOpen className="h-4 w-4 text-primary" aria-hidden="true" />
-                      {siteData.labels.sections.researchLog}
-                    </h3>
-                    <p className="mt-1 text-xs text-muted-foreground">Recent work and reading notes</p>
-                  </div>
-                  <span className="rounded border border-primary/15 bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                    {researchLog.length}
-                  </span>
-                </div>
-
-                <div className="space-y-5 border-l border-border/80 pl-4">
-                  {visibleResearchLog.map((item) => (
-                    <div key={`${item.status}-${item.title}`} className="relative">
-                      <span
-                        className={`absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-card ${statusDotStyles[item.status]}`}
-                      />
-                      <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span
-                          className={`rounded-full border px-2 py-0.5 text-xs ${statusStyles[item.status]}`}
-                        >
-                          {item.status}
-                        </span>
-                      </div>
-                      <p className="mb-1 text-xs uppercase text-muted-foreground">{item.date}</p>
-                      <h4 className="text-sm font-medium leading-snug text-foreground">{item.title}</h4>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.note}</p>
+                  {/* Education */}
+                  <section>
+                    <h2 className="mb-4 text-2xl font-medium text-foreground">
+                      {siteData.labels.sections.education}
+                    </h2>
+                    <div className="rounded-2xl border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]">
+                      {siteData.education.map((item) => (
+                        <div key={`${item.degree}-${item.school}`}>
+                          <h4 className="font-medium text-foreground">{item.degree}</h4>
+                          <p className="text-sm text-muted-foreground">{item.school}, {item.date}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </section>
                 </div>
-                {hasMoreResearchLog && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllResearchLog((isShowing) => !isShowing)}
-                    className="mt-5 w-full rounded-md border border-primary/15 bg-secondary/60 px-3 py-2 text-sm text-primary transition-colors hover:border-primary/30 hover:bg-secondary hover:text-foreground"
-                  >
-                    {showAllResearchLog
-                      ? siteData.labels.actions.showLess
-                      : `Show ${researchLog.length - 2} ${siteData.labels.actions.showMoreSuffix}`}
-                  </button>
-                )}
-              </div>
-            </aside>
+              )}
+            </section>
+
+
           </div>
 
           <footer className="mt-8 border-t border-primary/10 pt-8 text-sm text-muted-foreground">

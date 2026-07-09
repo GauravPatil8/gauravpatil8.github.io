@@ -12,12 +12,11 @@
   },
   "labels": {
     "tabs": {
-      "research": "Research & Projects",
+      "research": "Research",
       "experience": "Work Experience",
       "product": "Products"
     },
     "sections": {
-      "researchLog": "Research Log",
       "publications": "Publications",
       "projects": "Projects",
       "products": "Products",
@@ -30,9 +29,7 @@
       "buy": "Buy",
       "paper": "Paper",
       "code": "Code",
-      "comingSoon": "Coming soon",
-      "showLess": "Show less",
-      "showMoreSuffix": "more"
+      "comingSoon": "Coming soon"
     }
   },
   "socialLinks": [
@@ -63,32 +60,6 @@
     "Natural Language Processing",
     "Deep Learning",
     "Computer Graphics"
-  ],
-  "researchLog": [
-    {
-      "status": "Working on",
-      "date": "Jan 2026 - Present",
-      "title": "Retrieval consistency for image encoder robustness",
-      "note": "Studying how retrieval rankings shift when vision encoder inputs are perturbed."
-    },
-    {
-      "status": "Working on",
-      "date": "2025 - Present",
-      "title": "Detection-guided grocery recognition",
-      "note": "Refining the multimodal pipeline that combines detection, visual embeddings, and OCR text."
-    },
-    {
-      "status": "Currently reading",
-      "date": "May 2026",
-      "title": "MeshTron: High-Fidelity Mesh Reconstruction from Point Clouds",
-      "note": "Notes on neural 3D reconstruction, topology, and point-to-mesh generation."
-    },
-    {
-      "status": "Read",
-      "date": "2026",
-      "title": "Robustness and consistency in vision-language retrieval",
-      "note": "Tracking papers that connect perturbation behavior with retrieval reliability."
-    }
   ],
   "publications": [
     {
