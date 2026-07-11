@@ -451,11 +451,15 @@ const Index = () => {
                 }`}
             >
               <div className="aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-secondary">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="h-full w-full object-cover"
-                />
+                {/(\.mp4|\.webm)$/i.test(project.image) ? (
+                  <video src={project.image} className="h-full w-full object-cover" autoPlay muted loop playsInline />
+                ) : (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="h-full w-full object-cover"
+                  />
+                )}
               </div>
 
               <div className="min-w-0 flex-1">
@@ -736,11 +740,15 @@ const Index = () => {
                         className="flex w-full gap-4 rounded-[1.25rem] border border-transparent bg-card/60 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-card"
                       >
                         <div className="aspect-square h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-secondary sm:h-20 sm:w-20">
-                          <img
-                            src={project.image}
-                            alt={project.title}
-                            className="h-full w-full object-cover"
-                          />
+                          {/(\.mp4|\.webm)$/i.test(project.image) ? (
+                            <video src={project.image} className="h-full w-full object-cover" autoPlay muted loop playsInline />
+                          ) : (
+                            <img
+                              src={project.image}
+                              alt={project.title}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
                         </div>
 
                         <div className="min-w-0 flex-1">

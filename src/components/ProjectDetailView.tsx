@@ -176,7 +176,18 @@ const ProjectDetailView = ({
 
         <div className="space-y-4">
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/70">
-            <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+            {/(\.mp4|\.webm)$/i.test(project.image) ? (
+              <video
+                src={project.image}
+                className="h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+            )}
           </div>
 
           <div className="rounded-2xl border border-border/60 bg-card/70 p-4">

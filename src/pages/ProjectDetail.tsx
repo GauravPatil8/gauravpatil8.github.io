@@ -112,7 +112,11 @@ const ProjectDetail = () => {
           <h1 className="mb-4 text-3xl font-bold text-foreground">{project.title}</h1>
 
           <div className="mx-auto mb-8 aspect-square w-full max-w-md overflow-hidden rounded-lg bg-secondary">
-            <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+            {/(\.mp4|\.webm)$/i.test(project.image) ? (
+              <video src={project.image} className="h-full w-full object-cover" autoPlay muted loop playsInline />
+            ) : (
+              <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+            )}
           </div>
 
           <div className="mb-6 flex flex-wrap gap-2">
