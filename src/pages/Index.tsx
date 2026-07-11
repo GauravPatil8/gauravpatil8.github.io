@@ -254,15 +254,21 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>("meshtron");
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setSelectedProject(null);
+    }
+  }, []);
+
   // Determines whether sidebar+detail layout is shown
   const isDetailView = selectedProject !== null || selectedSection !== null;
 
   const projectTagStyles = [
-    "border-cyan-300/20 bg-cyan-300/10 text-cyan-200",
-    "border-green-300/20 bg-green-300/10 text-green-200",
-    "border-red-300/20 bg-red-300/10 text-red-200",
-    "border-violet-300/20 bg-violet-300/10 text-violet-200",
-    "border-amber-300/20 bg-amber-300/10 text-amber-200",
+    "border-foreground/20 bg-foreground/5 text-foreground/70",
+    "border-foreground/20 bg-foreground/5 text-foreground/70",
+    "border-foreground/20 bg-foreground/5 text-foreground/70",
+    "border-foreground/20 bg-foreground/5 text-foreground/70",
+    "border-foreground/20 bg-foreground/5 text-foreground/70",
   ];
 
   const socialIcons = {

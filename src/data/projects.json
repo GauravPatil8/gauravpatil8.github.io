@@ -20,7 +20,7 @@
       "Mesh Generation",
       "Geometric Deep Learning"
     ],
-    "image": "meshtron_gif.gif",
+    "image": "meshtron.gif",
     "github": "https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch",
     "paper": "https://arxiv.org/abs/2412.09548v1"
   },
