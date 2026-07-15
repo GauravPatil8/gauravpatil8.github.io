@@ -70,6 +70,187 @@ const MediaItem = ({ media }: { media: ProjectMedia }) => {
   );
 };
 
+const parseInlineMarkdown = (text: string): React.ReactNode => {
+  const regex = /(\*\*.*?\*\*|`.*?`|\[.*?\]\(.*?\))/g;
+  const parts = text.split(regex);
+  if (parts.length === 1) return text;
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return (
+            <strong key={i} className="font-semibold text-foreground">
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        if (part.startsWith("`") && part.endsWith("`")) {
+          return (
+            <code key={i} className="rounded bg-muted/60 border border-border/20 px-1 py-0.5 font-mono text-[11px] text-foreground">
+              {part.slice(1, -1)}
+            </code>
+          );
+        }
+        if (part.startsWith("[") && part.includes("](")) {
+          const match = part.match(/\[(.*?)\]\((.*?)\)/);
+          if (match) {
+            const [, linkText, url] = match;
+            const isFile = url.startsWith("file://");
+            const formattedUrl = isFile ? url.replace(/\\/g, "/") : url;
+            return (
+              <a
+                key={i}
+                href={formattedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium inline-flex items-center gap-0.5"
+              >
+                {linkText}
+              </a>
+            );
+          }
+        }
+        return part;
+      })}
+    </>
+  );
+};
+
+const MarkdownText = ({ text }: { text: string }) => {
+  const lines = text.split("\n");
+  const elements: React.ReactNode[] = [];
+  
+  let currentBlockType: "paragraph" | "list" | "code" | "blockquote" | null = null;
+  let currentBlockLines: string[] = [];
+  
+  const flushBlock = (key: string | number) => {
+    if (currentBlockLines.length === 0) return;
+    
+    if (currentBlockType === "code") {
+      const codeContent = currentBlockLines.join("\n");
+      elements.push(
+        <pre key={key} className="my-4 overflow-x-auto rounded-xl border border-border/40 bg-muted/30 p-4 font-mono text-[11px] leading-relaxed text-foreground">
+          <code>{codeContent}</code>
+        </pre>
+      );
+    } else if (currentBlockType === "list") {
+      elements.push(
+        <ul key={key} className="my-3 list-disc pl-5 space-y-1.5 text-sm text-muted-foreground">
+          {currentBlockLines.map((line, idx) => {
+            const content = line.trim().replace(/^[-*]\s+/, "");
+            return (
+              <li key={idx} className="leading-relaxed">
+                {parseInlineMarkdown(content)}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    } else if (currentBlockType === "blockquote") {
+      elements.push(
+        <blockquote key={key} className="my-4 border-l-4 border-primary/45 pl-4 py-1 italic text-muted-foreground bg-muted/20 rounded-r-lg">
+          {currentBlockLines.map((line, idx) => {
+            const content = line.trim().replace(/^>\s?/, "");
+            return (
+              <p key={idx} className="my-1.5 leading-relaxed">
+                {parseInlineMarkdown(content)}
+              </p>
+            );
+          })}
+        </blockquote>
+      );
+    } else if (currentBlockType === "paragraph") {
+      currentBlockLines.forEach((line, idx) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return;
+        
+        if (trimmedLine.startsWith("### ")) {
+          elements.push(
+            <h3 key={`${key}-${idx}`} className="mt-5 mb-2 text-base font-semibold tracking-tight text-foreground">
+              {parseInlineMarkdown(trimmedLine.slice(4))}
+            </h3>
+          );
+        } else if (trimmedLine.startsWith("#### ")) {
+          elements.push(
+            <h4 key={`${key}-${idx}`} className="mt-4 mb-2 text-sm font-semibold tracking-tight text-foreground">
+              {parseInlineMarkdown(trimmedLine.slice(5))}
+            </h4>
+          );
+        } else if (trimmedLine.startsWith("$$") && trimmedLine.endsWith("$$")) {
+          elements.push(
+            <div key={`${key}-${idx}`} className="my-4 text-center font-serif text-sm text-foreground bg-muted/10 py-2 rounded-lg overflow-x-auto">
+              {trimmedLine.slice(2, -2)}
+            </div>
+          );
+        } else {
+          elements.push(
+            <p key={`${key}-${idx}`} className="mb-3 leading-relaxed text-sm text-muted-foreground">
+              {parseInlineMarkdown(line)}
+            </p>
+          );
+        }
+      });
+    }
+    
+    currentBlockLines = [];
+    currentBlockType = null;
+  };
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    
+    if (trimmed.startsWith("```")) {
+      if (currentBlockType === "code") {
+        flushBlock(i);
+      } else {
+        flushBlock(i);
+        currentBlockType = "code";
+      }
+      continue;
+    }
+    
+    if (currentBlockType === "code") {
+      currentBlockLines.push(line);
+      continue;
+    }
+    
+    if (trimmed === "") {
+      flushBlock(i);
+      continue;
+    }
+    
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      if (currentBlockType !== "list") {
+        flushBlock(i);
+        currentBlockType = "list";
+      }
+      currentBlockLines.push(line);
+      continue;
+    }
+    
+    if (trimmed.startsWith(">")) {
+      if (currentBlockType !== "blockquote") {
+        flushBlock(i);
+        currentBlockType = "blockquote";
+      }
+      currentBlockLines.push(line);
+      continue;
+    }
+    
+    if (currentBlockType !== "paragraph") {
+      flushBlock(i);
+      currentBlockType = "paragraph";
+    }
+    currentBlockLines.push(line);
+  }
+  
+  flushBlock("final");
+  
+  return <div className="space-y-1">{elements}</div>;
+};
+
 type ProjectDetailViewProps = {
   project: Project;
   showBackLink?: boolean;
@@ -85,9 +266,9 @@ const ProjectDetailView = ({
 }: ProjectDetailViewProps) => {
   const [currentPage, setCurrentPage] = useState(0);
 
-  // Extract first 2 paragraphs for the overview preview
-  const longDescParagraphs = project.longDescription.split("\n\n");
-  const overviewParagraphs = longDescParagraphs.slice(0, 2);
+  // Extract overview section content
+  const overviewSection = project.sections[0];
+  const overviewParagraphs = overviewSection ? overviewSection.content : [];
 
   // Build pages dynamically
   const pages: { label: string; content: React.ReactNode }[] = [];
@@ -127,42 +308,31 @@ const ProjectDetailView = ({
                 {siteData.projectDetail.githubLabel}
               </a>
             )}
-            {project.paper && (
-              <a
-                href={project.paper}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:underline"
-              >
-                <ExternalLink size={16} />
-                {siteData.projectDetail.paperLabel}
-              </a>
-            )}
-            {!project.paper && (
-              <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <ExternalLink size={16} />
-                {siteData.projectDetail.comingSoonLabel}
-              </span>
-            )}
+
           </div>
 
-          {/* Overview preview from long description */}
+          {/* Overview preview */}
           <div className="mt-6 border-t border-border/30 pt-4">
-            {overviewParagraphs.map((paragraph, index) => {
-              if (paragraph.startsWith("## ")) {
-                return (
-                  <h3 key={index} className="mb-2 text-sm font-semibold text-foreground">
-                    {paragraph.replace("## ", "")}
-                  </h3>
-                );
+            {overviewParagraphs.map((item, index) => {
+              if (typeof item === "string") {
+                return <MarkdownText key={index} text={item} />;
+              } else if (item && typeof item === "object") {
+                if (item.type === "image") {
+                  return (
+                    <div key={index} className="my-3">
+                      <div className="w-full overflow-hidden rounded-lg border border-border/60 bg-secondary">
+                        <img src={withBase(item.url)} alt={item.caption || ""} className="h-auto w-full object-cover" />
+                      </div>
+                      {item.caption && (
+                        <p className="mt-1 text-center text-[11px] italic text-muted-foreground">{item.caption}</p>
+                      )}
+                    </div>
+                  );
+                }
               }
-              return (
-                <p key={index} className="mb-2 text-sm leading-relaxed text-muted-foreground">
-                  {paragraph}
-                </p>
-              );
+              return null;
             })}
-            {longDescParagraphs.length > 2 && (
+            {project.sections && project.sections.length > 1 && (
               <button
                 type="button"
                 onClick={() => setCurrentPage(1)}
@@ -207,7 +377,6 @@ const ProjectDetailView = ({
                 <span>Links</span>
                 <span className="text-right text-foreground">
                   {project.github ? "Code" : "Private"}
-                  {project.paper ? " · Paper" : ""}
                 </span>
               </li>
             </ul>
@@ -217,38 +386,55 @@ const ProjectDetailView = ({
     ),
   });
 
-  // Page 2: In-depth — long description
-  pages.push({
-    label: "In-depth",
-    content: (
-      <div className="h-full overflow-y-auto prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground">
-        {longDescParagraphs.map((paragraph, index) => {
-          if (paragraph.startsWith("## ")) {
-            return (
-              <h3 key={index} className="mb-3 mt-6 text-base font-semibold text-foreground first:mt-0">
-                {paragraph.replace("## ", "")}
-              </h3>
-            );
-          }
-          if (paragraph.startsWith("- ")) {
-            const items = paragraph.split("\n").filter((line) => line.startsWith("- "));
-            return (
-              <ul key={index} className="mb-3 list-inside list-disc space-y-1">
-                {items.map((item, itemIndex) => (
-                  <li key={itemIndex}>{item.replace("- ", "")}</li>
-                ))}
-              </ul>
-            );
-          }
-          return (
-            <p key={index} className="mb-3 leading-relaxed">
-              {paragraph}
-            </p>
-          );
-        })}
-      </div>
-    ),
-  });
+  // Dynamic pages for the remaining details
+  if (project.sections && project.sections.length > 1) {
+    project.sections.slice(1).forEach((section) => {
+      pages.push({
+        label: section.title,
+        content: (
+          <div className="h-full overflow-y-auto prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground">
+            <h2 className="text-xl font-bold tracking-tight text-foreground mb-4 border-b border-border/30 pb-2">{section.title}</h2>
+            {section.content.map((item, index) => {
+              if (typeof item === "string") {
+                return <MarkdownText key={index} text={item} />;
+              } else if (item && typeof item === "object") {
+                if (item.type === "image") {
+                  return (
+                    <div key={index} className="my-4">
+                      <div className="w-full overflow-hidden rounded-xl border border-border/60 bg-secondary">
+                        <img
+                          src={withBase(item.url)}
+                          alt={item.caption || "Explaining diagram"}
+                          className="h-auto w-full object-cover"
+                        />
+                      </div>
+                      {item.caption && (
+                        <p className="mt-2 text-center text-xs italic text-muted-foreground">{item.caption}</p>
+                      )}
+                    </div>
+                  );
+                } else if (item.type === "video") {
+                  return (
+                    <div key={index} className="my-4">
+                      <div className="w-full overflow-hidden rounded-xl border border-border/60 bg-secondary">
+                        <video src={withBase(item.url)} controls className="h-auto w-full">
+                          {siteData.projectDetail.videoFallback}
+                        </video>
+                      </div>
+                      {item.caption && (
+                        <p className="mt-2 text-center text-xs italic text-muted-foreground">{item.caption}</p>
+                      )}
+                    </div>
+                  );
+                }
+              }
+              return null;
+            })}
+          </div>
+        ),
+      });
+    });
+  }
 
   // Page 3: Gallery — only if media exists
   if (project.media && project.media.length > 0) {
@@ -270,7 +456,7 @@ const ProjectDetailView = ({
   const safeCurrentPage = Math.min(currentPage, pages.length - 1);
 
   return (
-    <div className="flex w-full flex-col" style={{ minHeight: "32rem" }}>
+    <div className="flex w-full flex-col flex-1 min-h-0" style={{ minHeight: "32rem" }}>
       {showBackLink && (
         <a
           href={backHref}
@@ -298,18 +484,19 @@ const ProjectDetailView = ({
           <span className="hidden sm:inline">Prev</span>
         </button>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-[12rem] xs:max-w-[16rem] sm:max-w-none">
           {pages.map((page, index) => (
             <button
               key={page.label}
               type="button"
               onClick={() => setCurrentPage(index)}
-              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${index === safeCurrentPage
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap ${index === safeCurrentPage
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
                 }`}
             >
-              {page.label}
+              <span className="hidden sm:inline">{page.label}</span>
+              <span className="inline sm:hidden">{index + 1}</span>
             </button>
           ))}
         </div>

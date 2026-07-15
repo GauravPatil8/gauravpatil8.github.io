@@ -1,17 +1,59 @@
 [
   {
     "id": "meshtron",
-    "title": "Nvidia MeshTron: 3D Mesh Generation from Point Clouds",
-    "description": "End-to-end implementation of a neural pipeline for generating high-quality triangle meshes directly from unstructured point clouds.",
-    "longDescription": [
-      "MeshTron is a research-focused implementation inspired by NVIDIA's Meshtron approach, aimed at converting raw 3D point clouds into coherent, watertight triangle meshes using deep learning.",
-      "The project explores how neural networks can learn geometric structure, surface continuity, and topology from unordered point samples, bridging the gap between point-based representations and mesh-based 3D assets used in real-time graphics, simulation, and animation pipelines.",
-      "## Features",
-      "- End-to-end neural pipeline for point cloud to mesh reconstruction\n- Learned surface representation with explicit vertex and face prediction\n- Custom PyTorch training loop with geometry-aware loss functions\n- Support for synthetic datasets (cubes, tori, parametric shapes) for controlled experiments\n- Mesh quality evaluation using geometric metrics (surface smoothness, edge consistency)\n- Modular architecture designed for experimentation with different encoders and decoders",
-      "## Technical Details",
-      "The system takes an unstructured point cloud as input and encodes it using a permutation-invariant network inspired by PointNet-style architectures. The latent representation is then decoded into explicit mesh primitives, predicting vertex positions and mesh connectivity in a structured manner.",
-      "Special care is taken to handle challenges unique to mesh generation, such as maintaining consistent topology, avoiding self-intersections, and producing animation-friendly geometry. The implementation emphasizes clarity and research extensibility, making it suitable for further exploration into retopology, geometric deep learning, and neural surface reconstruction.",
-      "This project serves both as a learning-driven reimplementation of modern neural mesh generation techniques and as a foundation for future work in AI-assisted 3D content creation."
+    "title": "Nvidia Meshtron: From-Scratch PyTorch Replication",
+    "description": "End-to-end implementation of hourglass transformer architecture for generating high-quality triangle meshes directly from unstructured point clouds using NVIDIA's Meshtron as a reference paper.",
+    "sections": [
+      {
+        "title": "Overview",
+        "content": [
+          "MeshTron is an autoregressive encoder-decoder model designed by NVIDIA Research that generates high-fidelity, artist-like 3D meshes. By generating meshes face-by-face in a bottom-up sequence, it breaks past the resolution barriers of traditional 3D generative AI. The model supports up to 64,000 faces at a 1024-coordinate resolution—representing an 8x increase in fidelity over previous models.",
+          "Unlike traditional approaches that predict vertices and faces independently, MeshTron models the 3D mesh structure by sequentially generating the coordinate values of the triangular faces. The generation proceeds bottom-up along the vertical z-axis. The model is guided by three main inputs: a 3D point cloud of the target shape, a target face count controlling the mesh density, and a target quad ratio that defines the preferred topological layout (such as triangle-heavy versus quad-dominant shapes).",
+          "For implementation specifics, refer to the main model class [Meshtron](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/model.py#L16) in [model.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/model.py)."
+        ]
+      },
+      {
+        "title": "Mesh Tokenization",
+        "content": [
+          "To process a 3D mesh (like an OBJ file) using a transformer, the raw geometric data must first be converted into a sequence of discrete integer tokens. MeshTron achieves this through a structured tokenization pipeline implemented in the [MeshTokenizer](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/mesh_tokenizer.py#L6) class.",
+          {
+            "type": "image",
+            "url": "mesh_tokenization.png",
+            "caption": "Figure 2: The MeshTron tokenization pipeline converting 3D geometry into a causal 1D token sequence."
+          },
+          "The pipeline processes the raw mesh in a sequence of key stages:\n- **Normalization**: The mesh vertices are zero-centered and scaled so the largest bounding dimension fits inside a unit cube of size 1.0 (mapping coordinates to the [-0.5, 0.5] range).\n- **Face Sorting**: The faces of the mesh are sorted by the vertical z-axis coordinate of their centroid from bottom to top, establishing a vertical growth order.\n- **Vertex Sorting**: To eliminate vertex order permutations, the three vertices of each triangular face are sorted lexicographically based on their coordinates.\n- **Coordinate Reordering**: Standard coordinates are reordered from (x, y, z) to (z, y, x), putting the vertical z-axis first to match the primary axis of growth.\n- **Flattening**: The sequence of faces, each defined by 3 vertices of 3 coordinates, is flattened into a 1D tensor of coordinates of length N * 9 (where N is the number of faces).\n- **Quantization**: Coordinates in [-0.5, 0.5] are mapped to discrete integer bins (0 to 127 for 128 bins) using the equation: `bin_index = clamp(floor((c + 0.5) * bins), 0, bins - 1)`.\n- **Special Tokens**: Vocabulary is extended by adding `SOS` (Start of Sequence) = 128, `EOS` (End of Sequence) = 129, and `PAD` (Padding) = 130.",
+          "For further tokenization details, see the methods `_normalize_mesh`, `_extract_faces_bot_top`, `_lex_sort_verts`, `quantize`, and `encode` in [mesh_tokenizer.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/mesh_tokenizer.py)."
+        ]
+      },
+      {
+        "title": "Conditioning Encoder",
+        "content": [
+          "The Conditioning Encoder is responsible for preparing structural and geometric conditioning context to guide the generation process. Because standard self-attention scales quadratically with the size of the input point cloud, MeshTron utilizes a Perceiver architecture. This maps the dense point cloud down to a fixed set of 256 latent vectors, keeping the computational cost constant regardless of how detailed the input shape is.",
+          "The conditioning pipeline is composed of these primary elements:\n- **Perceiver Point Cloud Encoder**: Standard self-attention scales quadratically (O(N²)) with point cloud size. To prevent this, the encoder uses a Perceiver architecture. It maps a high-density input point cloud of shape [B, N, 6] (where 6 channels correspond to 3D coordinates + point normals) down to a fixed set of 256 latent vectors of dimension 512.\n- **Face Count MLP**: Encodes the desired density (resolution) of the output mesh. The scalar value is passed through a 2-layer MLP (Linear -> ReLU -> Linear) to output a [B, 1, 512] token.\n- **Quad Ratio MLP**: Encodes the topology style (triangle vs. quad-dominant layouts). The scalar ratio is mapped through a similar 2-layer MLP to output a [B, 1, 512] token.\n- **Context Aggregation**: The Perceiver point cloud latents and MLP embeddings are concatenated together along the sequence dimension to form a single tensor of shape [B, 258, 512]. This context acts as the keys (K) and values (V) for cross-attention layers in the decoder.",
+          "For encoder logic, refer to the [ConditioningEncoder](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/encoder_conditioning.py#L5) class in [encoder_conditioning.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/encoder_conditioning.py)."
+        ]
+      },
+      {
+        "title": "Hourglass Decoder",
+        "content": [
+          "To generate meshes with high face counts, the autoregressive decoder must process sequences containing hundreds of thousands of tokens. MeshTron handles this efficiently using a hierarchical Hourglass Architecture. This design downsamples the token sequence in the bottleneck layers to reduce computation, and subsequently upsamples it back causally.",
+          {
+            "type": "image",
+            "url": "meshtron_decoder.png",
+            "caption": "Figure 4: Hourglass Valley Architecture with hierarchical downsampling and causal upsampling."
+          },
+          "The valley pipeline and attention mechanisms operate as follows:\n- **Pre-Layer & Post-Layer**: Process the full-resolution sequence L.\n- **Downsample**: Combines groups of sf consecutive tokens (where sf=3 is the shortening factor) into a single feature vector of dimension D * sf, then projects it back to D using a linear layer. This reduces sequence length by a factor of 3 at each stage.\n- **Causal Upsample & Skip Connections**: Upsampling maps each token to sf tokens using a linear layer and reshapes the sequence. To prevent future information leakage (since upsampling makes sequence tokens at step t depend on representation t which originally merged inputs up to step t * sf + sf - 1), the model applies a Causal Shift (padding/shifting sequence to the right by sf - 1 steps) using: `shift = self.sf - 1` and `x = F.pad(x, (0, 0, shift, -shift), value=0.)`. Skip connections add representations from the downsampling path to preserve details.\n- **Flash Sliding Window Self-Attention**: Self-attention blocks only attend to a sliding window of previous tokens (default: 256 tokens) using flash_attn to keep scale sub-quadratic.\n- **Rotary Position Embeddings (RoPE)**: Applied to self-attention queries and keys to preserve position semantics, which change at different levels of the hourglass.\n- **Cross-Attention**: Injected periodically (e.g., every 4 layers) using the conditioning context, without position embeddings.\n- **SwiGLU FFN**: Feed-forward networks use SwiGLU activation for superior training stability: `SwiGLU(x) = SiLU(x1) * x2`.",
+          "For further decoder details, see [Transformer](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/decoder_hourglass.py#L89) and [Layer](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/decoder_hourglass.py#L124) in [decoder_hourglass.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/decoder_hourglass.py), as well as [Attention](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/_attention.py#L7) in [_attention.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/meshtron/_attention.py)."
+        ]
+      },
+      {
+        "title": "Inference & Streaming",
+        "content": [
+          "During inference, the model generates the mesh token-by-token in a continuous autoregressive loop. The process starts by feeding the model a sequence of 9 SOS tokens to initialize the state. As the model predicts the probability distribution of the next coordinate token, Top-K sampling (filtering out values below a cumulative probability threshold, e.g., 0.9) is applied to prevent degenerated sequences. The selected token is dequantized back into a physical coordinate value and streamed instantly to the client.",
+          "The generation flow and client reconstruction follow these phases:\n- **Initialization**: Starts with 9 SOS tokens. The input sequence is dynamically padded in multiples of sf^2 = 9 tokens.\n- **Causal Output Tracking**: To predict the token at position L, the inference pipeline extracts the logit output at index L-1, avoiding padding token contamination.\n- **Sampling & Streaming**: Samples a token using multinomial sampling, dequantizes it to coordinate floats, and streams it to the client.\n- **Reconstruction**: The client groups incoming coordinates in triplets to form vertices, mapping them back from (z, y, x) to standard (x, y, z) dimensions. Every three vertices are combined to write a new face to the final OBJ mesh in real time.",
+          "For pipeline details, check out the [Inference](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/pipeline/stages/inference.py#L15) stage in [inference.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/pipeline/stages/inference.py), the FastAPI server in [server.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/server.py), and the [MeshGenerationViewer](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/mesh_generation_visualizer.py#L16) in [mesh_generation_visualizer.py](https://github.com/GauravPatil8/Nvidia-Meshtron-Pytorch/blob/main/mesh_generation_visualizer.py)."
+        ]
+      }
     ],
     "tags": [
       "PyTorch",
@@ -28,11 +70,20 @@
     "id": "multimodal-grocery-recognition",
     "title": "Multimodal Grocery Product Recognition",
     "description": "Detection-guided multimodal system combining vision and OCR text for fine-grained retail product recognition.",
-    "longDescription": [
-      "A multimodal recognition pipeline designed for dense retail grocery images containing multiple products.",
-      "The system combines YOLO-based object detection with multimodal classification by fusing visual embeddings from ResNet-50 and OCR text embeddings from DistilBERT. Synthetic multi-product scenes were generated to benchmark multiple YOLO variants, identifying YOLOv12n as the best trade-off between accuracy and efficiency.",
-      "## Key Contributions",
-      "- Detection-guided multimodal recognition pipeline\n- Fusion of visual and textual embeddings\n- Custom dataloaders and evaluation tools\n- Achieved 87% Top-1 accuracy on fine-grained product recognition"
+    "sections": [
+      {
+        "title": "Overview",
+        "content": [
+          "A multimodal recognition pipeline designed for dense retail grocery images containing multiple products.",
+          "The system combines YOLO-based object detection with multimodal classification by fusing visual embeddings from ResNet-50 and OCR text embeddings from DistilBERT. Synthetic multi-product scenes were generated to benchmark multiple YOLO variants, identifying YOLOv12n as the best trade-off between accuracy and efficiency."
+        ]
+      },
+      {
+        "title": "Key Contributions",
+        "content": [
+          "- Detection-guided multimodal recognition pipeline\n- Fusion of visual and textual embeddings\n- Custom dataloaders and evaluation tools\n- Achieved 87% Top-1 accuracy on fine-grained product recognition"
+        ]
+      }
     ],
     "tags": ["Multimodal AI", "YOLO", "ResNet", "DistilBERT", "PyTorch"],
     "image": "multimodel_grocery.png",
@@ -42,11 +93,20 @@
     "id": "pointnet-classification",
     "title": "3D Point Cloud Classification with PointNet",
     "description": "PyTorch implementation of PointNet for 3D object classification with real-time inference support.",
-    "longDescription": [
-      "This project is a full PyTorch implementation of the original PointNet architecture for 3D point cloud classification.",
-      "The model was trained and evaluated on the ModelNet10 dataset, achieving 92% classification accuracy. The pipeline includes data normalization, augmentation, batching, and efficient GPU training. A Streamlit-based interface enables real-time inference and visualization of point cloud predictions.",
-      "## Highlights",
-      "- Faithful reproduction of the PointNet paper architecture\n- End-to-end training and evaluation pipeline\n- Real-time inference with interactive visualization\n- Deep dive into permutation invariance and point-based representations"
+    "sections": [
+      {
+        "title": "Overview",
+        "content": [
+          "This project is a full PyTorch implementation of the original PointNet architecture for 3D point cloud classification.",
+          "The model was trained and evaluated on the ModelNet10 dataset, achieving 92% classification accuracy. The pipeline includes data normalization, augmentation, batching, and efficient GPU training. A Streamlit-based interface enables real-time inference and visualization of point cloud predictions."
+        ]
+      },
+      {
+        "title": "Highlights",
+        "content": [
+          "- Faithful reproduction of the PointNet paper architecture\n- End-to-end training and evaluation pipeline\n- Real-time inference with interactive visualization\n- Deep dive into permutation invariance and point-based representations"
+        ]
+      }
     ],
     "tags": ["PyTorch", "PointNet", "3D Deep Learning", "Point Clouds"],
     "image": "pointnet.png",
@@ -56,11 +116,20 @@
     "id": "scam-sniffer",
     "title": "Scam Sniffer: Fake Job Post Detection",
     "description": "Machine learning classifier for detecting fraudulent job postings on professional platforms.",
-    "longDescription": [
-      "Scam Sniffer is a machine learning project focused on identifying fake and scam job postings using structured job listing features.",
-      "The system uses an XGBoost classifier trained on curated job post data to distinguish legitimate listings from fraudulent ones. Multiple models were evaluated, with XGBoost achieving the best performance in terms of accuracy and F1 score.",
-      "## Highlights",
-      "- Feature engineering for structured job post data\n- Model benchmarking across multiple classifiers\n- Strong accuracy and F1 score compared to baselines\n- Practical application in online safety and fraud detection"
+    "sections": [
+      {
+        "title": "Overview",
+        "content": [
+          "Scam Sniffer is a machine learning project focused on identifying fake and scam job postings using structured job listing features.",
+          "The system uses an XGBoost classifier trained on curated job post data to distinguish legitimate listings from fraudulent ones. Multiple models were evaluated, with XGBoost achieving the best performance in terms of accuracy and F1 score."
+        ]
+      },
+      {
+        "title": "Highlights",
+        "content": [
+          "- Feature engineering for structured job post data\n- Model benchmarking across multiple classifiers\n- Strong accuracy and F1 score compared to baselines\n- Practical application in online safety and fraud detection"
+        ]
+      }
     ],
     "tags": ["Machine Learning", "XGBoost", "Fraud Detection", "Python"],
     "image": "scam_sniffer.png",

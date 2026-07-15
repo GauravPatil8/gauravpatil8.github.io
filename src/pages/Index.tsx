@@ -420,7 +420,7 @@ const Index = () => {
     <div className="rounded-2xl border border-primary/10 bg-card/60 p-3 lg:sticky lg:top-4">
       {/* Projects list */}
       <div className="mb-3 flex items-center justify-between gap-3 px-1">
-        <h3 className="text-sm font-medium text-foreground">Projects</h3>
+        <h3 className="text-base font-semibold text-foreground">Projects</h3>
         <button
           type="button"
           onClick={() => {
@@ -482,7 +482,7 @@ const Index = () => {
           onClick={() => setSelectedSection("publications")}
           className="mb-2 flex w-full items-center justify-between px-1"
         >
-          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.publications}</h3>
+          <h3 className="text-base font-semibold text-foreground">{siteData.labels.sections.publications}</h3>
           <span className="text-xs text-primary">→</span>
         </button>
         <div className="space-y-1.5">
@@ -511,7 +511,7 @@ const Index = () => {
           onClick={() => setSelectedSection("experience")}
           className="mb-2 flex w-full items-center justify-between px-1"
         >
-          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.experience}</h3>
+          <h3 className="text-base font-semibold text-foreground">{siteData.labels.sections.experience}</h3>
           <span className="text-xs text-primary">→</span>
         </button>
         <div className="space-y-1.5">
@@ -545,7 +545,7 @@ const Index = () => {
           onClick={() => setSelectedSection("products")}
           className="mb-2 flex w-full items-center justify-between px-1"
         >
-          <h3 className="text-sm font-medium text-foreground">{siteData.labels.sections.products}</h3>
+          <h3 className="text-base font-semibold text-foreground">{siteData.labels.sections.products}</h3>
           <span className="text-xs text-primary">→</span>
         </button>
         <div className="space-y-1.5">
@@ -569,7 +569,7 @@ const Index = () => {
 
       {/* Education */}
       <div className="mt-4 border-t border-border/60 pt-3">
-        <h3 className="mb-2 px-1 text-sm font-medium text-foreground">{siteData.labels.sections.education}</h3>
+        <h3 className="mb-2 px-1 text-base font-semibold text-foreground">{siteData.labels.sections.education}</h3>
         <div className="space-y-1.5">
           {siteData.education.map((item) => (
             <button
@@ -598,7 +598,7 @@ const Index = () => {
     // If a section is selected, show section content
     if (selectedSection) {
       return (
-        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:min-h-[48rem] lg:p-7">
+        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:h-[48rem] lg:p-7 overflow-y-auto">
           <div className="relative">
             <button
               type="button"
@@ -616,8 +616,8 @@ const Index = () => {
     // Otherwise show the selected project detail
     if (selectedProjectData) {
       return (
-        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:min-h-[48rem] lg:p-7">
-          <div className="relative">
+        <div className="rounded-[1.5rem] border border-primary/10 bg-card/70 p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.04)_inset] lg:h-[48rem] lg:p-7 flex flex-col">
+          <div className="relative flex-1 flex flex-col min-h-0">
             <button
               type="button"
               onClick={() => {
@@ -628,7 +628,7 @@ const Index = () => {
             >
               Close
             </button>
-            <ProjectDetailView project={selectedProjectData} />
+            <ProjectDetailView project={selectedProjectData} key={selectedProjectData.id} />
           </div>
         </div>
       );
@@ -693,10 +693,6 @@ const Index = () => {
 
           <div className="grid gap-8">
             <section>
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="text-2xl font-medium text-foreground">{siteData.labels.sections.projects}</h2>
-              </div>
-
               {isDetailView ? (
                 <div>
                   {/* Mobile: back button + full-width content (no sidebar) */}
@@ -737,7 +733,7 @@ const Index = () => {
                           setSelectedProject(project.id);
                           setSelectedSection(null);
                         }}
-                        className="flex w-full gap-4 rounded-[1.25rem] border border-transparent bg-card/60 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-card"
+                        className="group flex w-full gap-4 rounded-[1.25rem] border border-transparent bg-card/60 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-card"
                       >
                         <div className="aspect-square h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-secondary sm:h-20 sm:w-20">
                           {/(\.mp4|\.webm)$/i.test(project.image) ? (
@@ -766,29 +762,23 @@ const Index = () => {
                                   <Github size={18} />
                                 </a>
                               )}
-                              {project.paper && (
-                                <a
-                                  href={project.paper}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-muted-foreground transition-colors hover:text-primary"
-                                  onClick={(event) => event.stopPropagation()}
-                                >
-                                  <ExternalLink size={18} />
-                                </a>
-                              )}
                             </div>
                           </div>
                           <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {project.tags.slice(0, 3).map((tag, tagIndex) => (
-                              <span
-                                key={tag}
-                                className={`rounded-full border px-2 py-0.5 text-[11px] ${projectTagStyles[tagIndex % projectTagStyles.length]}`}
-                              >
-                                {tag}
-                              </span>
-                            ))}
+                          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex flex-wrap gap-2">
+                              {project.tags.slice(0, 3).map((tag, tagIndex) => (
+                                <span
+                                  key={tag}
+                                  className={`rounded-full border px-2 py-0.5 text-[11px] ${projectTagStyles[tagIndex % projectTagStyles.length]}`}
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-primary transition-colors">
+                              Read about it <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                            </span>
                           </div>
                         </div>
                       </button>
